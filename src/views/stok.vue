@@ -1,17 +1,17 @@
 <template>
-    <div class="container"> 
-        <div class="row  mt-5">
-                <div class="col-sm-6">
-                    <router-link to="/" class="btn btn-info">
-                        <span class="bi bi-chevron-left text-white"></span>
-                    </router-link>
-                </div>
-                <div class="col-sm-6 ">
-                    <div class="d-grid gap-2  d-md-block text-end ">
-                        <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="isTambah = true" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca"> Jenis kaca</button>    
-                    </div>
-                    <div class="modal fade" id="TambahJenisKaca" tabindex="-1" aria-labelledby="TambahJenisKaca" aria-hidden="true">
-                        <div class="modal-dialog">
+  <div class="container"> 
+    <div class="row  mt-5">
+      <div class="col-sm-6">
+        <router-link to="/" class="btn btn-info">
+          <span class="bi bi-chevron-left text-white"></span>
+        </router-link>
+      </div>
+      <div class="col-sm-6 ">
+      <div class="d-grid gap-2  d-md-block text-end ">
+        <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="isTambah = true" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca"> Jenis kaca</button>    
+      </div>
+      <div class="modal fade" id="TambahJenisKaca" tabindex="-1" aria-labelledby="TambahJenisKaca" aria-hidden="true">
+        <div class="modal-dialog">
                             <div class="modal-content">
                             <div class="alert alert-success modal-header text-center">
                                 <h5 class="alert-heading" id="TambahJenisKaca">Tambah Jenis Kaca</h5>

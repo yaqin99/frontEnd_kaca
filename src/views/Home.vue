@@ -14,7 +14,6 @@
         isCetak.value = true ; 
     };
 
-
     let dataTransaksi = reactive<dataTransaksiType[]>([])
 
     onMounted(async() =>{
@@ -64,6 +63,13 @@
                                 <button type="button" class=" btn btn-warning " @click="tampilDetail()">Cetak</button>
                            </td>
                         </tr>
+                        <tr>
+                            <td>asd</td>
+                            <td>asda</td>
+                            <td>asdasd</td>
+                            <td>asdasd</td>
+                            <td><button type="button" class=" btn btn-warning " @click="tampilDetail()">Cetak</button></td>
+                        </tr>
                         
                    </tbody>
                 </table>
@@ -91,7 +97,14 @@
             <div  id="collapseExample">
                 <div class="card"  v-if="isCetak">
                     <div class="card-header fw-bold text-center">
-                        Tranksaksi
+                        <div class="row">
+                        <div class="col-8 text-end">
+                            Tranksaksi
+                        </div>
+                        <div class="col-4 text-end">
+                            <button type="button" class="btn-close" @click="isCetak=false"></button>
+                        </div>
+                        </div>
                     </div>
                     <div class="card-body" >
                             <div class="row" >
