@@ -169,25 +169,19 @@
          stok : number , 
      }
     
-     type jenisType = {
-         nama : string , 
-         panjang : number , 
-         lebar : number , 
-         tebal : number , 
-         stok:number,
-     }
+    
     
     let selected = '';
     
     let stokTampil = ref();
     let id = ref<number>();
-    const munculTableStok = (i:number) => {
-         id.value = i ; 
-         console.log('ini id Value' + id.value)
-         stokTampil.value = true ; 
-         dataStokId.splice(0,dataStokId.length);
-         tampilStok();
-    };
+    // const munculTableStok = (i:number) => {
+    //      id.value = i ; 
+    //      console.log('ini id Value' + id.value)
+    //      stokTampil.value = true ; 
+    //      dataStokId.splice(0,dataStokId.length);
+    //      tampilStok();
+    // };
     const tableStokHide = () => {
         stokTampil.value = false ; 
     };
@@ -213,64 +207,77 @@
 
     console.log(stokKaca)
     
-     const dataJenis = reactive<jenisType[]>([])
+   
      
      const dataStok = reactive<stokType[]>([])
      const dataStokId = reactive<stokType[]>([])
     console.log(dataStokId)
 
 
-    const inputJenis = async () => {
-        try {
-            const data = await Api.postResource('/jenis',jenisKacaBody,'POST')
-            dataStok.splice(0,dataStok.length);
-            const ambil = await Api.getStok('/tampil/stok',dataStok,0);
+    // const inputJenis = async () => {
+    //     try {
+    //         const data = await Api.postResource('/jenis',jenisKacaBody,'POST')
+    //         dataStok.splice(0,dataStok.length);
+    //         const ambil = await Api.getStok('/tampil/stok',dataStok,0);
            
-        }
-        catch(err){
-            console.log(err)
-        }
-    }; 
+    //     }
+    //     catch(err){
+    //         console.log(err)
+    //     }
+    // }; 
 
 
-    const ambilJenis = async () => {
-        const ambil = await Api.getJenis('/jenis',dataJenis)
-    };
+    // const ambilJenis = async () => {
+    //     const ambil = await Api.getJenis('/jenis',dataJenis)
+    // };
 
 
     const jumlah = ref();
     console.log('ini adalah jumlahnya'+jumlah.value)
-    const inputStok = async ()=> {
-        try {
-            const data = await Api.postResource('/stok',stokKaca,'POST')
-             dataStok.splice(0,dataStok.length);
-            const ambil = await Api.getStok('/tampil/stok',dataStok,0,jumlah.value);
-        }
-        catch(err){
-            console.log(err)
-        }
-    };
+    // const inputStok = async ()=> {
+    //     try {
+    //         const data = await Api.postResource('/stok',stokKaca,'POST')
+    //          dataStok.splice(0,dataStok.length);
+    //         const ambil = await Api.getStok('/tampil/stok',dataStok,0,jumlah.value);
+    //     }
+    //     catch(err){
+    //         console.log(err)
+    //     }
+    // };
 
     
-    const tampilStok = async () => {
-        const url = await'/tampil/stok/history/' + id.value ;
-        const ambil = await Api.getStok(url,dataStokId)
-    };
+    // const tampilStok = async () => {
+    //     const url = await'/tampil/stok/history/' + id.value ;
+    //     const ambil = await Api.getStok(url,dataStokId)
+    // };
+     type jenisType = {
+         nama : string , 
+         panjang : number , 
+         lebar : number , 
+         tebal : number , 
+         
+     }
     
-   
-     
+    const dataJenis = reactive<jenisType[]>([])
+    console.log(dataJenis)
+
      onMounted(async() =>{
     
-    try {
-      const data = await Api.getStok('/tampil/stok',dataStok)
-     
-    }
-    catch(err){
-      console.log(err)
-    }
-    
-  })
-
-  
-
+      const response = await fetch('http://localhost:8181/jenis');
+      const data = await response.json();
+                
+                if(data.length > 0 ){
+                    data.forEach((d: any) => {
+                      dataJenis.push({
+                        nama : d.nama , 
+                        panjang : d.panjang , 
+                        lebar : d.lebar , 
+                        tebal : d.tebal , 
+                       
+                       
+                      })
+                    });
+                  }
+                }
+            )
 </script>

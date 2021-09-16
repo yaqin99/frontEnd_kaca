@@ -22,59 +22,9 @@ export default class Api {
             }
        });
    }
-   public static getJenis(path:string,arr:any):Promise<any>{
-       return new Promise (async (resolve,reject)=>{
-            try {
-                const response = await fetch(this.host + path);
-                const data = await response.json();
-                
-                if(data.length > 0 ){
-                    data.forEach((d: any) => {
-                      arr.push({
-                        id:d.id,
-                        nama : d.nama , 
-                        panjang : d.panjang, 
-                        lebar : d.lebar,
-                        tebal : d.tebal,
-                      })
-                    });
-                  }
-            }
-            catch(err){
-                reject(err)
-            }
-       });
-   }
+   
 
-   public static getStok(path:string,arr:any,stok?:number,jumlah?:number):Promise<any>{
-       return new Promise (async (resolve,reject)=>{
-            try {
-                const response = await fetch(this.host + path);
-                const data = await response.json();
-                
-                if(data.length > 0 ){
-                    data.forEach((d: any) => {
-                      arr.push({
-                        id_jenis_kaca:d.id_jenis_kaca,
-                        nama : d.nama , 
-                        panjang : d.panjang , 
-                        lebar : d.lebar , 
-                        tebal : d.tebal , 
-                        tanggal:d.tanggal , 
-                        harga : d.harga , 
-                        stok : d.stok , 
-                        optional_stok:stok,
-                        jumlah:jumlah,
-                      })
-                    });
-                  }
-            }
-            catch(err){
-                reject(err)
-            }
-       });
-   }
-    
+   
     public static postResource(path: string, data: any, method: string = 'POST'): Promise<any> {
         return new Promise(async (resolve, reject) => {
           try {

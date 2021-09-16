@@ -22,12 +22,19 @@
         kembali:number , 
         id:number,
         lebar:number,
+        nama:number, 
+        hp:number,
     }
 
     const isCetak = ref();
-
+    const clickAgain = ref();
     const subTransaksi = reactive<subTransaksiType[]>([])
+
     const tampilDetail =  async (i:number) => {
+        if(clickAgain.value = true ){
+            subTransaksi.splice(0,subTransaksi.length);
+
+        }
         const idnya = i ; 
        console.log(idnya)
         const response = await fetch('http://localhost:8181/tampil/subtransaksi/' + idnya)
@@ -45,11 +52,18 @@
                 id_jenis_kaca:sub.id_jenis_kaca,
                 bayar:sub.bayar, 
                 kembali:sub.kembali,
+                nama:sub.nama,
+                hp:sub.hp
             })
         });
         isCetak.value = true ; 
+        clickAgain.value = true;
         console.log(subTransaksi)
-        
+    };
+
+    const clearAll = () => {
+        subTransaksi.splice(0,subTransaksi.length);
+        isCetak.value = false ; 
     };
 
     const dataTransaksi = reactive<dataTransaksiType[]>([])
@@ -148,12 +162,12 @@
                             Tranksaksi
                         </div>
                         <div class="col-4 text-end">
-                            <button type="button" class="btn-close" @click="isCetak=false"></button>
+                            <button type="button" class="btn-close" @click="clearAll()"></button>
                         </div>
                         </div>
                     </div>
-                    <div class="card-body" >
-                            <div class="row"  v-for="(sub,i) in subTransaksi" :key="sub.id" >
+                    <div class="card-body"  v-for="(sub,i) in subTransaksi" :key="sub.id" >
+                            <div class="row"  >
                                 <div class="col align-self-start" style="font-size: 11px;">
                              {{ i + 1}}.Tagihan
                                 </div>
@@ -161,21 +175,21 @@
                                 {{ sub.tanggal}}
                                 </div>
                             </div>
-                            <div class="row"  v-for="(x) in dataTransaksi" :key="x.id">
+                            <div class="row" >
                                 <div class="col">
                                     <div class="alert alert-danger fw-bold" role="alert" style="font-size: 11px;">
-                                        <span>{{x.nama}} ({{x.hp}})
-                                            <p>{{x.alamat}}</p>
+                                        <span>{{sub.nama}} ({{sub.hp}})
+                                            <p>{{sub.alamat}}</p>
                                         </span> 
                                     </div>
                                 </div>
                             </div>
-                            <div class="row align-items-center"  v-for="(y,index) in subTransaksi" :key="y.id">
+                            <div class="row align-items-center"  >
                                 <div class="col align-self-start" style="font-size: 11px;">
-                                Kaca {{index + 1}} ({{ y.panjang}} x {{ y.lebar}})
+                                Kaca {{index + 1}} ({{sub.panjang}} x {{sub.lebar}})
                                 </div>
                                 <div class="col align-self-end text-end" style="font-size: 11px;">
-                                {{ y.tanggal}}
+                                {{ sub.tanggal}}
                                 </div>
                             </div>
                     </div>
@@ -188,7 +202,7 @@
                                             
             </div>
             <div class="d-grid gap-2 mt-2">
-                    <router-link to="/transaksii" class="btn btn-primary" type="button">
+                    <router-link to="/transaksi" class="btn btn-primary" type="button">
                         <i class="bi bi-plus-circle"></i>
                         Tambah Tranksaksi
                     </router-link>
