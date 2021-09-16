@@ -6,20 +6,72 @@
         nama : string , 
         hp : number , 
         alamat : string ,
+        total:number,
+        tanggal:string,
+        id:number,
+    }
+    type subTransaksiType = { 
+        alamat : string ,
+        total:number,
+        tanggal:string,
+        panjang:number, 
+        biaya:number, 
+        nama_kaca:string,
+        id_jenis_kaca:number,
+        bayar:number , 
+        kembali:number , 
+        id:number,
+        lebar:number,
     }
 
-
     const isCetak = ref();
-    const tampilDetail = () => {
+
+    const subTransaksi = reactive<subTransaksiType[]>([])
+    const tampilDetail =  async (i:number) => {
+        const idnya = i ; 
+       console.log(idnya)
+        const response = await fetch('http://localhost:8181/tampil/subtransaksi/' + idnya)
+        const data = await response.json();
+        data.forEach((sub:any) => {
+            subTransaksi.push({
+                id:sub.id,
+                alamat : sub.alamat ,
+                total:sub.total,
+                tanggal:sub.tanggal,
+                panjang:sub.panjang, 
+                lebar:sub.lebar,
+                biaya:sub.biaya, 
+                nama_kaca:sub.nama_kaca,
+                id_jenis_kaca:sub.id_jenis_kaca,
+                bayar:sub.bayar, 
+                kembali:sub.kembali,
+            })
+        });
         isCetak.value = true ; 
+        console.log(subTransaksi)
+        
     };
 
-    let dataTransaksi = reactive<dataTransaksiType[]>([])
+    const dataTransaksi = reactive<dataTransaksiType[]>([])
+
 
     onMounted(async() =>{
     
     try {
-        const data = await Api.getTransaksi('/tampil/transaksi',dataTransaksi)
+       const response = await fetch('http://localhost:8181/tampil/transaksi');
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataTransaksi.push({
+                          nama:d.nama, 
+                          hp:d.hp , 
+                          alamat:d.alamat,
+                          total:d.total, 
+                          tanggal:d.tanggal, 
+                          id:d.id,
+                      })
+                    });
+                  }
     }
     catch(err){
       console.log(err)
@@ -51,6 +103,7 @@
                             <th>Pembeli</th>
                             <th>Pendapatan</th>
                             <th>Aksi</th>
+                           
                         </tr>
                     </thead>
                     <tbody class="text-center">
@@ -59,8 +112,9 @@
                             <td>{{data.tanggal}}</td>
                             <td>{{ data.nama}}</td>
                             <td>{{'Rp.'+data.total}}</td>
+                           
                             <td>
-                                <button type="button" class=" btn btn-warning " @click="tampilDetail()">Cetak</button>
+                                <button type="button" class=" btn btn-warning " @click="tampilDetail(data.id)">Cetak</button>
                            </td>
                         </tr>
                    </tbody>
@@ -99,29 +153,29 @@
                         </div>
                     </div>
                     <div class="card-body" >
-                            <div class="row" >
+                            <div class="row"  v-for="(sub,i) in subTransaksi" :key="sub.id" >
                                 <div class="col align-self-start" style="font-size: 11px;">
-                                #1 Invoice
+                             {{ i + 1}}.Tagihan
                                 </div>
                                 <div class="col align-self-end text-end" style="font-size: 11px;">
-                                12/10/2021
+                                {{ sub.tanggal}}
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row"  v-for="(x) in dataTransaksi" :key="x.id">
                                 <div class="col">
                                     <div class="alert alert-danger fw-bold" role="alert" style="font-size: 11px;">
-                                        <span>Rahman (085231339223)
-                                            <p>Jl. Dirgahayu Gg. IV</p>
+                                        <span>{{x.nama}} ({{x.hp}})
+                                            <p>{{x.alamat}}</p>
                                         </span> 
                                     </div>
                                 </div>
                             </div>
-                            <div class="row align-items-center" >
+                            <div class="row align-items-center"  v-for="(y,index) in subTransaksi" :key="y.id">
                                 <div class="col align-self-start" style="font-size: 11px;">
-                                Kaca 1 (56 x 23)
+                                Kaca {{index + 1}} ({{ y.panjang}} x {{ y.lebar}})
                                 </div>
                                 <div class="col align-self-end text-end" style="font-size: 11px;">
-                                12/10/2021
+                                {{ y.tanggal}}
                                 </div>
                             </div>
                     </div>

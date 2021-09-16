@@ -45,27 +45,7 @@ export default class Api {
             }
        });
    }
-   public static getTransaksi(path:string,arr:any):Promise<any>{
-       return new Promise (async (resolve,reject)=>{
-            try {
-                const response = await fetch(this.host + path);
-                const data = await response.json();
-                
-                if(data.length > 0 ){
-                    data.forEach((d: any) => {
-                      arr.push({
-                        tanggal:d.tanggal,
-                        nama : d.nama , 
-                        total : d.total, 
-                      })
-                    });
-                  }
-            }
-            catch(err){
-                reject(err)
-            }
-       });
-   }
+
    public static getStok(path:string,arr:any,stok?:number,jumlah?:number):Promise<any>{
        return new Promise (async (resolve,reject)=>{
             try {
