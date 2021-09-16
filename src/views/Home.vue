@@ -31,11 +31,11 @@
 
 <template> 
     <div class="container">        
-        <div class="row ">
+        <div class="row my-4">
             <div class="col-9">
                 <h1 class="text-center">Toko Anugerah</h1>
             </div>
-            <div class="col-3 text-end">
+            <div class="col-3 text-end mt-3">
                 <router-link to="/stok" class="btn btn-danger">
                 <span class="bi bi-gear"></span>  
                 </router-link>
@@ -63,14 +63,6 @@
                                 <button type="button" class=" btn btn-warning " @click="tampilDetail()">Cetak</button>
                            </td>
                         </tr>
-                        <tr>
-                            <td>asd</td>
-                            <td>asda</td>
-                            <td>asdasd</td>
-                            <td>asdasd</td>
-                            <td><button type="button" class=" btn btn-warning " @click="tampilDetail()">Cetak</button></td>
-                        </tr>
-                        
                    </tbody>
                 </table>
                 <nav aria-label="Page navigation example">
