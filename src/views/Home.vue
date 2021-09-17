@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { onMounted, reactive ,ref } from 'vue';
-    import Api from '../services/api';
 
+   
     type dataTransaksiType = {
         nama : string , 
         hp : number , 
@@ -195,9 +195,9 @@
                             </div>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="#" class="btn btn-danger btn-sm">
+                        <button type="button" class="btn btn-danger btn-sm" >
                             <i class="bi bi-printer"></i> Cetak
-                        </a>
+                        </button>
                     </div>
                 </div> 
                                             
