@@ -75,6 +75,10 @@
                         </div>
                     </div>
                     <div class="col-5 px-3 d-flex align-items-center">
+                        <div class="col-12 d-sm-flex justify-content-end">
+                             <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
+                             <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
+                      </div>
                         
                         <div class="modal fade" id="tambahstok" tabindex="-1" aria-labelledby="tambahstok" aria-hidden="true">
                         <div class="modal-dialog">
@@ -121,10 +125,7 @@
                         </tr>                      
                     </tbody>
                 </table>
-                <div class="col-12 ">
-                             <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
-                             <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
-                </div>
+                
             </div>
         </div>
         <div class="row">
@@ -153,6 +154,13 @@
          stok:number,
          harga:number,
      }
+    const stokKaca =  {
+        
+        id_jenis_kaca: 0 , 
+        tanggal:'',
+        stok:'',
+        harga:'',
+    }
     
     
     
@@ -166,6 +174,7 @@
          id.value = i ; 
          
          stokTampil.value = true ; 
+         stokKaca.id_jenis_kaca = i;
          
          const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
          const data = await response.json();
@@ -194,13 +203,6 @@
     };
     
 
-    const stokKaca =  {
-        
-        id_jenis_kaca: idStok.value , 
-        tanggal:'',
-        stok:'',
-        harga:'',
-    }
     
     console.log('ini kacanya ')
     console.log(stokKaca)
@@ -234,6 +236,10 @@
                       })
                     });
                   }
+                  jenisKacaBody.nama = '';
+                  jenisKacaBody.panjang = '';
+                  jenisKacaBody.lebar = ''; 
+                  jenisKacaBody.tebal = '';
         }
         catch(err){
             console.log(err)
@@ -245,7 +251,7 @@
     const inputStok = async ()=> {
         try {
             const data = await Api.postResource('/stok',stokKaca,'POST')
-             dataStok.splice(0,dataStok.length);
+            dataStok.splice(0,dataStok.length);
             const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
             const ambil = await response.json();
                 dataStok.splice(0,dataStok.length)
@@ -260,6 +266,12 @@
                       })
                     });
                   }
+             stokKaca.id_jenis_kaca = 0 ; 
+             stokKaca.tanggal = '' ; 
+             stokKaca.stok = '' ; 
+             stokKaca.harga= '' ; 
+    
+    
             const res = await fetch('http://localhost:8181/jenis');
             const sample = await res.json();
             dataJenis.splice(0,dataJenis.length)
