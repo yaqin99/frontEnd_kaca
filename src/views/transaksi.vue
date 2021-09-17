@@ -12,33 +12,34 @@
                     <div class="col-12 row mt-3">
                         <label for="jenis_kaca" class="col-sm-3 col-form-label fw-bold">JENIS KACA</label>
                         <div class="col-9">
-                            <select v-model="transaksiBody.id_jenis_kaca" class=" col-sm-8 form-select">
-                                <option disabled value="">Pilih Jenis Kaca</option>
-                               <option :value="jenis.id" v-for="jenis in dataJenis" :key="jenis.id">{{ jenis.nama}}</option>
+                            <select v-model="selected" class=" col-sm-8 form-select">
+                               <option  v-for="jenis in dataJenis" :key="jenis.id">{{ jenis.nama }}</option>
                             </select>
                         </div>
                     </div>
-                    
                     <div class="col-12 row mt-3">
                         <label for="ukuran" class="col-sm-3 col-form-label fw-bold">Ukuran</label>
                         <div class="col-sm-3">
-                           <input type="text" class="form-control text-center" placeholder="Panjang" v-model="transaksiBody.panjang">
+                           <input type="text" class="form-control text-center" placeholder="Panjang" v-model="tpanjang">
+                        <h1>{{tpanjang}}</h1>
                         </div>
                         <div class="col-sm-3 offset-sm-1">
-                            <input type="text" class="form-control text-center" placeholder="Lebar" v-model="transaksiBody.lebar">
+                            <input type="text" class="form-control text-center" placeholder="Lebar" v-model="tlebar">
+                         <h1>{{tlebar}}</h1>
                          </div>
                     </div>
 
                     <div class="col-12 row mt-3">
                         <label for="Jumlah" class="col-sm-3 col-form-label fw-bold">JUMLAH</label>
                         <div class="col-sm-2">
-                           <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="transaksiBody.jumlah">
+                           <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="tjumlah">
+                           <h1>{{tjumlah}}</h1>
                         </div>
 
                         <div class="col-sm-4 offset-sm-1 ">
                             <div class="input-group sm-2">
                                 <span class="input-group-text" id="harga"><i class="bi bi-cash-coin"></i></span>
-                                <input type="text"  class="form-control" v-model="transaksiBody.harga"  placeholder="Rp. 0" aria-label="Username" aria-describedby="basic-addon1">
+                                <input type="text"  class="form-control" placeholder="Rp. 0" :value="tharga" aria-label="Username" aria-describedby="basic-addon1">
                             </div>
 
                         </div>
@@ -142,7 +143,18 @@
          lebar : number , 
          tebal : number , 
      }
+    const selected = ref();
+    const tlebar = ref();
+    const tpanjang = ref();
+    const state = reactive({
+        tlebar,
+        tpanjang
+    })
+
     
+    const tjumlah = state.tlebar + state.tpanjang;
+    
+
     const transaksiBody =  {
         id_jenis_kaca: '',
         
@@ -153,7 +165,6 @@
         jumlah:'',
       }
     
-    const tampil =  reactive<jenisType[]>([])
     
     const dataJenis = reactive<jenisType[]>([])
     console.log(transaksiBody)

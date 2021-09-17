@@ -7,96 +7,94 @@
         </router-link>
       </div>
       <div class="col-sm-6 ">
-      <div class="d-grid gap-2  d-md-block text-end ">
-        <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="isTambah = true" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca"> Jenis kaca</button>    
-      </div>
-      <div class="modal fade" id="TambahJenisKaca" tabindex="-1" aria-labelledby="TambahJenisKaca" aria-hidden="true">
-        <div class="modal-dialog">
-                            <div class="modal-content">
-                            <div class="alert alert-success modal-header text-center">
-                                <h5 class="alert-heading" id="TambahJenisKaca">Tambah Jenis Kaca</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" v-model="jenisKacaBody.nama" placeholder="Nama Kaca">
-                                    </div>
-                                    <div class="col-12 row mt-3">
-                                        <label class="col-sm-3 col-form-label fw-bold">Ukuran(cm)</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" v-model="jenisKacaBody.panjang" class="form-control text-center" placeholder="Panjang">
-                                        </div>
-                                        <div class="col-sm-3 ">
-                                            <input type="text" v-model="jenisKacaBody.lebar" class="form-control text-center" placeholder="Lebar">
-                                        </div>
-                                        <div class="col-sm-3 ">
-                                            <input type="text" v-model="jenisKacaBody.tebal" class="form-control text-center" placeholder="Tebal">
-                                        </div>
-                                    </div>
-                                   
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-primary" @click="inputJenis()" data-bs-dismiss="modal">Simpan</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>    
+        <div class="d-grid gap-2  d-md-block text-end ">
+          <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="isTambah = true" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca"> Jenis kaca</button>    
         </div>
-        <div class="row">
-            <div class="col-sm-6 mt-5">
-                <table class="table table-borderless table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Ukuran</th>
-                            <th>Total Stok</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(jenis, i) in dataJenis" :key="jenis.id">
-                            <td>{{ i + 1}}</td>
-                            <td @click="munculTableStok(jenis.id)">{{ jenis.nama}}</td>
-                            <td>{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
-                            <td>{{ jenis.stok }}</td>
-                        </tr>    
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-sm-6 mt-5 "  v-if="stokTampil">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="col-6">
-                            <h1 class="fw-bold text-end border">STOK</h1>
-                        </div>
+        <div class="modal fade" id="TambahJenisKaca" tabindex="-1" aria-labelledby="TambahJenisKaca" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="alert alert-success modal-header text-center">
+                <h5 class="alert-heading" id="TambahJenisKaca">Tambah Jenis Kaca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form role="form">
+                  <div class="form-group">
+                    <input type="text" class="form-control" v-model="jenisKacaBody.nama" placeholder="Nama Kaca">
+                  </div>
+                  <div class="col-12 row mt-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Ukuran(cm)</label>
+                    <div class="col-sm-3">
+                      <input type="text" v-model="jenisKacaBody.panjang" class="form-control text-center" placeholder="Panjang">
                     </div>
-                    <div class="col-5 px-3 d-flex align-items-center">
-                        <div class="col-12 d-sm-flex justify-content-end">
-                             <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
-                             <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
+                    <div class="col-sm-3 ">
+                      <input type="text" v-model="jenisKacaBody.lebar" class="form-control text-center" placeholder="Lebar">
+                    </div>
+                    <div class="col-sm-3 ">
+                      <input type="text" v-model="jenisKacaBody.tebal" class="form-control text-center" placeholder="Tebal">
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" @click="inputJenis()" data-bs-dismiss="modal">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+    <div class="row">
+      <div class="col-sm-6 mt-5">
+        <table class="table table-borderless table table-striped text-center">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Ukuran</th>
+              <th>Total Stok</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(jenis, i) in dataJenis" :key="jenis.id">
+              <td>{{ i + 1}}</td>
+              <td @click="munculTableStok(jenis.id)">{{ jenis.nama}}</td>
+              <td>{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
+              <td>{{ jenis.stok }}</td>
+            </tr>    
+          </tbody>
+        </table>
+        </div>
+        <div class="col-sm-6 mt-5 "  v-if="stokTampil">
+          <div class="row">
+            <div class="col-6">
+              <div class="col-6">
+                <h1 class="fw-bold text-end border">STOK</h1>
+              </div>
+            </div>
+            <div class="col-5 px-3 d-flex align-items-center">
+              <div class="col-12 d-sm-flex justify-content-end">
+                <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
+                <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
+              </div> 
+                <div class="modal fade" id="tambahstok" tabindex="-1" aria-labelledby="tambahstok" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="tambahstok">Tambah Stok</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group  mt-3">
+                        <input type="text mt-3" v-model="stokKaca.harga" class="form-control" placeholder="Harga Beli">
                       </div>
-                        
-                        <div class="modal fade" id="tambahstok" tabindex="-1" aria-labelledby="tambahstok" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="tambahstok">Tambah Stok</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                    <div class="form-group  mt-3">
-                                        <input type="text mt-3" v-model="stokKaca.harga" class="form-control" placeholder="Harga Beli">
-                                    </div>
-                                    <div class="form-group  mt-3">
-                                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Jumlah">
-                                    </div>
-                                    <div class="form-group  mt-3">
-                                        <input type="date" v-model="stokKaca.tanggal"  class="form-control" placeholder="Jumlah">
-                                    </div>
+                      <div class="form-group  mt-3">
+                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Jumlah">
+                      </div>
+                      <div class="form-group  mt-3">
+                        <input type="date" v-model="stokKaca.tanggal"  class="form-control" placeholder="Jumlah">
+                      </div>
                                    
                             </div>
                             <div class="modal-footer">

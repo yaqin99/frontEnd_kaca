@@ -2,8 +2,7 @@
 </script>
 
 <template>
-{{response}}
- <div class="container">
+  <div class="container">
       <div class="row">
         <div class="col">
           <router-view></router-view>
