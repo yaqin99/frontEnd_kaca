@@ -74,6 +74,7 @@
     try {
        const response = await fetch('http://localhost:8181/tampil/transaksi');
                 const data = await response.json();
+                console.log(data);
                 if(data.length > 0 ){
                     data.forEach((d:any) => {
                       dataTransaksi.push({

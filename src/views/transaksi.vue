@@ -1,4 +1,3 @@
-
 <template>
     
     <div class="container">
@@ -135,9 +134,6 @@
 <script setup lang="ts">
     import { onMounted, reactive, ref } from 'vue';
     import Api from '../services/api';
-
-
-
     
     type jenisType = {
          id_jenis_kaca : number,
@@ -159,7 +155,6 @@
     
     const tampil =  reactive<jenisType[]>([])
     
-
     const dataJenis = reactive<jenisType[]>([])
     console.log(transaksiBody)
     onMounted(async() =>{
@@ -168,19 +163,21 @@
         const response = await fetch('http://localhost:8181/jenis');
                 const data = await response.json();
                 console.log(data)
-                // if(data.length > 0 ){
-                //     data.forEach((d: any) => {
-                //       dataJenis.push({
-                //         id:d.id,
-                //         nama : d.nama , 
-                //         panjang : d.panjang, 
-                //         lebar : d.lebar,
-                //         tebal : d.tebal,
-                //       })
-                //     });
-                //   }
 
+                console.log(data[0][1])
+                if(data.length > 0 ){
+                    data[0].forEach((d: any) => {
+                      dataJenis.push({
+                        id_jenis_kaca:d.id,
+                        nama : d.nama , 
+                        panjang : d.panjang, 
+                        lebar : d.lebar,
+                        tebal : d.tebal,
+                      },
+                    )
 
+                    });
+                  }
     }
     catch(err){
       console.log(err)

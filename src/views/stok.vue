@@ -220,7 +220,7 @@
             dataJenis.splice(0,dataJenis.length);
            const response = await fetch('http://localhost:8181/jenis');
            const sample = await response.json();
-                
+                console.log('fgdfg',sample);
                 if(sample.length > 0 ){
                     sample.forEach((d: any) => {
                       dataJenis.push({
