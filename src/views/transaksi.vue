@@ -167,18 +167,18 @@
         
         const response = await fetch('http://localhost:8181/jenis');
                 const data = await response.json();
-                
-                if(data.length > 0 ){
-                    data.forEach((d: any) => {
-                      arr.push({
-                        id:d.id,
-                        nama : d.nama , 
-                        panjang : d.panjang, 
-                        lebar : d.lebar,
-                        tebal : d.tebal,
-                      })
-                    });
-                  }
+                console.log(data)
+                // if(data.length > 0 ){
+                //     data.forEach((d: any) => {
+                //       dataJenis.push({
+                //         id:d.id,
+                //         nama : d.nama , 
+                //         panjang : d.panjang, 
+                //         lebar : d.lebar,
+                //         tebal : d.tebal,
+                //       })
+                //     });
+                //   }
 
 
     }

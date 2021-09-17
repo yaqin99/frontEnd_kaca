@@ -58,16 +58,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(stok, i) in dataStok" :key="stok.id">
+                        <tr v-for="(jenis, i) in dataJenis" :key="jenis.id">
                             <td>{{ i + 1}}</td>
-                            <td @click="munculTableStok(stok.id_jenis_kaca)">{{ stok.nama}}</td>
-                            <td>{{ stok.panjang}} x {{ stok.lebar}} x {{ stok.tebal}}</td>
-                            <td>{{ stok.stok > 0 ? stok.stok : stok.optional_stok}}</td>
+                            <td @click="munculTableStok(jenis.id)">{{ jenis.nama}}</td>
+                            <td>{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
+                            <td>{{ jenis.stok }}</td>
                         </tr>    
                     </tbody>
                 </table>
             </div>
-            <div class="col-sm-6 mt-5 "  v-show="stokTampil">
+            <div class="col-sm-6 mt-5 "  v-if="stokTampil">
                 <div class="row">
                     <div class="col-6">
                         <div class="col-6">
@@ -75,10 +75,7 @@
                         </div>
                     </div>
                     <div class="col-5 px-3 d-flex align-items-center">
-                        <div class="col-12 d-flex justify-content-end">
-                             <button type="button" class="btn btn-primary" @click="ambilJenis()" data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
-                             <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
-                        </div>
+                        
                         <div class="modal fade" id="tambahstok" tabindex="-1" aria-labelledby="tambahstok" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -87,30 +84,16 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                               <div class="form-group  mt-3">
-                                     <div class="col-12 row mt-3 mb-3">
-                                        <label class="col-sm-3 col-form-label fw-bold">Tentukan :</label>
-                                            <div class="col-sm-5">
-                                                <select class="form-select" v-model="stokKaca.id_jenis_kaca" aria-label="Default select example" >
-                                                <option selected>Open this select menu</option>
-                                                <option :value="jenis.id" v-for="jenis in dataJenis" :key="jenis.id">{{ jenis.nama}}</option>
-                                                
-                                                </select>
-                                            </div>
-                                            
-                                    </div>  
-                                    
-                                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Total Stok">
-                                    </div>
                                     <div class="form-group  mt-3">
                                         <input type="text mt-3" v-model="stokKaca.harga" class="form-control" placeholder="Harga Beli">
                                     </div>
                                     <div class="form-group  mt-3">
-                                        <input type="text" v-model="jumlah"  class="form-control" placeholder="Jumlah">
+                                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Jumlah">
                                     </div>
                                     <div class="form-group  mt-3">
                                         <input type="date" v-model="stokKaca.tanggal"  class="form-control" placeholder="Jumlah">
                                     </div>
+                                   
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -130,13 +113,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(stk) in dataStokId" :key="stk.id">
+                        <tr v-for="(stk) in dataStok" :key="stk.id">
                             <td>{{stk.tanggal}}</td>
                             <td>{{'Rp.' + stk.harga}}</td>
-                            <td>{{stk.jumlah}}</td>  
+                            <td>{{stk.stok}}</td>  
+                            
                         </tr>                      
                     </tbody>
                 </table>
+                <div class="col-12 ">
+                             <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
+                             <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -160,90 +148,139 @@
 
     
      type stokType = {
-         nama : string , 
-         panjang : number , 
-         lebar : number , 
-         tebal : number , 
+         id_jenis_kaca:number,
          tanggal:string , 
-         harga : number , 
-         stok : number , 
+         stok:number,
+         harga:number,
      }
     
     
     
-    let selected = '';
+    
     
     let stokTampil = ref();
     let id = ref<number>();
-    // const munculTableStok = (i:number) => {
-    //      id.value = i ; 
-    //      console.log('ini id Value' + id.value)
-    //      stokTampil.value = true ; 
-    //      dataStokId.splice(0,dataStokId.length);
-    //      tampilStok();
-    // };
+   
+    const dataStok = reactive<stokType[]>([])
+    const munculTableStok = async (i:number) => {
+         id.value = i ; 
+         
+         stokTampil.value = true ; 
+         
+         const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
+         const data = await response.json();
+                dataStok.splice(0,dataStok.length)
+                if(data.length > 0 ){
+                    data.forEach((d: any) => {
+                      dataStok.push({
+                       id_jenis_kaca:d.id_jenis_kaca,
+                       tanggal:d.tanggal, 
+                       stok:d.stok,
+                       harga:d.harga,
+                       
+                      })
+                    });
+                  }
+         
+    };
     const tableStokHide = () => {
         stokTampil.value = false ; 
     };
+
+       
+    const idStok = ref()
+    const tambahStok = ()=> {
+        idStok.value = id.value;
+    };
     
+
+    const stokKaca =  {
+        
+        id_jenis_kaca: idStok.value , 
+        tanggal:'',
+        stok:'',
+        harga:'',
+    }
     
+    console.log('ini kacanya ')
+    console.log(stokKaca)
+
+
 
     const jenisKacaBody = {
         nama: '' , 
         panjang : '' ,
         lebar: '',
         tebal: '' , 
-        stok:0,
-    }
-
-    const stokKaca =  {
         
-        id_jenis_kaca: '', 
-        tanggal:'',
-        stok:'',
-        harga:'',
-       
     }
+    const inputJenis = async () => {
+        try {
+            const data = await Api.postResource('/jenis',jenisKacaBody,'POST')
+            dataJenis.splice(0,dataJenis.length);
+           const response = await fetch('http://localhost:8181/jenis');
+           const sample = await response.json();
+                
+                if(sample.length > 0 ){
+                    sample.forEach((d: any) => {
+                      dataJenis.push({
+                            id:d.id,
+                            nama : d.nama , 
+                            panjang : d.panjang , 
+                            lebar : d.lebar , 
+                            tebal : d.tebal , 
+                            stok:d.stok,
+                       
+                      })
+                    });
+                  }
+        }
+        catch(err){
+            console.log(err)
+        }
+    }; 
 
-    console.log(stokKaca)
-    
-   
-     
-     const dataStok = reactive<stokType[]>([])
-     const dataStokId = reactive<stokType[]>([])
-    console.log(dataStokId)
 
-
-    // const inputJenis = async () => {
-    //     try {
-    //         const data = await Api.postResource('/jenis',jenisKacaBody,'POST')
-    //         dataStok.splice(0,dataStok.length);
-    //         const ambil = await Api.getStok('/tampil/stok',dataStok,0);
-           
-    //     }
-    //     catch(err){
-    //         console.log(err)
-    //     }
-    // }; 
-
-
-    // const ambilJenis = async () => {
-    //     const ambil = await Api.getJenis('/jenis',dataJenis)
-    // };
-
-
-    const jumlah = ref();
-    console.log('ini adalah jumlahnya'+jumlah.value)
-    // const inputStok = async ()=> {
-    //     try {
-    //         const data = await Api.postResource('/stok',stokKaca,'POST')
-    //          dataStok.splice(0,dataStok.length);
-    //         const ambil = await Api.getStok('/tampil/stok',dataStok,0,jumlah.value);
-    //     }
-    //     catch(err){
-    //         console.log(err)
-    //     }
-    // };
+      
+    const inputStok = async ()=> {
+        try {
+            const data = await Api.postResource('/stok',stokKaca,'POST')
+             dataStok.splice(0,dataStok.length);
+            const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
+            const ambil = await response.json();
+                dataStok.splice(0,dataStok.length)
+                if(ambil.length > 0 ){
+                    ambil.forEach((d: any) => {
+                      dataStok.push({
+                       id_jenis_kaca:d.id_jenis_kaca,
+                       tanggal:d.tanggal, 
+                       stok:d.stok,
+                       harga:d.harga,
+                       
+                      })
+                    });
+                  }
+            const res = await fetch('http://localhost:8181/jenis');
+            const sample = await res.json();
+            dataJenis.splice(0,dataJenis.length)
+                if(sample.length > 0 ){
+                    sample.forEach((d: any) => {
+                      dataJenis.push({
+                        id:d.id,
+                        nama : d.nama , 
+                        panjang : d.panjang , 
+                        lebar : d.lebar , 
+                        tebal : d.tebal , 
+                        stok:d.stok,
+                       
+                      })
+                    });
+                  }
+        }
+        catch(err){
+            console.log(err)
+        }
+    };
 
     
     // const tampilStok = async () => {
@@ -251,14 +288,16 @@
     //     const ambil = await Api.getStok(url,dataStokId)
     // };
      type jenisType = {
+         id:number,
          nama : string , 
          panjang : number , 
          lebar : number , 
          tebal : number , 
-         
+         stok:number,
      }
     
     const dataJenis = reactive<jenisType[]>([])
+    console.log('inji jenisa')
     console.log(dataJenis)
 
      onMounted(async() =>{
@@ -269,11 +308,12 @@
                 if(data.length > 0 ){
                     data.forEach((d: any) => {
                       dataJenis.push({
+                          id:d.id,
                         nama : d.nama , 
                         panjang : d.panjang , 
                         lebar : d.lebar , 
                         tebal : d.tebal , 
-                       
+                        stok:d.stok,
                        
                       })
                     });
