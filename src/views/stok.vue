@@ -19,26 +19,30 @@
               </div>
               <div class="modal-body">
                 <form role="form">
-                  <div class="form-group">
-                    <input type="text" class="form-control" v-model="jenisKacaBody.nama" placeholder="Nama Kaca">
+                  <div class="form-group ">
+                    <input type="text" class="form-control " v-model="nama" id="nama" placeholder="Nama Kaca">
+                    <span>{{errors.nama}}</span>
                   </div>
                   <div class="col-12 row mt-3">
                     <label class="col-sm-3 col-form-label fw-bold">Ukuran(cm)</label>
                     <div class="col-sm-3">
-                      <input type="text" v-model="jenisKacaBody.panjang" class="form-control text-center" placeholder="Panjang">
+                      <input type="text" v-model="panjang" id="panjang" class="form-control text-center" placeholder="Panjang">
+                    <span>{{ errors.panjang}}</span>
                     </div>
                     <div class="col-sm-3 ">
-                      <input type="text" v-model="jenisKacaBody.lebar" class="form-control text-center" placeholder="Lebar">
+                      <input type="text" v-model="lebar" id="lebar" class="form-control text-center" placeholder="Lebar">
+                    <span>{{ errors.lebar}}</span>
                     </div>
                     <div class="col-sm-3 ">
-                      <input type="text" v-model="jenisKacaBody.tebal" class="form-control text-center" placeholder="Tebal">
+                      <input type="text" v-model="tebal" id="tebal" class="form-control text-center" placeholder="Tebal">
+                    <span>{{ errors.tebal}}</span>
                     </div>
                   </div>
                 </form>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" @click="inputJenis()" data-bs-dismiss="modal">Simpan</button>
+                <button type="button" class="btn btn-primary" :disabled="!meta.valid" @click="inputJenis()" data-bs-dismiss="modal">Simpan</button>
               </div>
             </div>
           </div>
@@ -144,6 +148,8 @@
 <script setup lang="ts">
      import { onMounted, reactive, ref } from 'vue';
      import Api from '../services/api';
+     import { useField, useForm } from 'vee-validate';
+     import * as yup from 'yup'
 
     
      type stokType = {
@@ -159,6 +165,25 @@
         stok:'',
         harga:'',
     }
+    
+      const schema = yup.object({
+          nama:yup.string().required().max(20),
+          panjang:yup.number().required().max(200).min(1),
+          lebar:yup.number().required().max(200).min(1),
+          tebal:yup.number().required().max(200).min(0.5)
+       });
+ 
+  
+
+    const {setValues,meta, errors} = useForm({
+      validationSchema: schema
+    })
+
+    const {value:nama , meta:metaNama} = useField('nama');
+    const {value:panjang , meta:metaPanjang} = useField('panjang');
+    const {value:lebar , meta:metaLebar} = useField('lebar');
+    const {value:tebal , meta:metaTebal} = useField('tebal');
+    
     
     
     
@@ -207,16 +232,10 @@
 
 
 
-    const jenisKacaBody = {
-        nama: '' , 
-        panjang : '' ,
-        lebar: '',
-        tebal: '' , 
-        
-    }
+    
     const inputJenis = async () => {
         try {
-            const data = await Api.postResource('/jenis',jenisKacaBody,'POST')
+            const data = await Api.postResource('/jenis',{nama:nama , panjang:panjang , lebar:lebar , tebal:tebal},'POST')
             dataJenis.splice(0,dataJenis.length);
            const response = await fetch('http://localhost:8181/jenis');
            const sample = await response.json();
@@ -234,10 +253,7 @@
                       })
                     });
                   }
-                  jenisKacaBody.nama = '';
-                  jenisKacaBody.panjang = '';
-                  jenisKacaBody.lebar = ''; 
-                  jenisKacaBody.tebal = '';
+                 
         }
         catch(err){
             console.log(err)
