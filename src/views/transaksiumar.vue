@@ -21,29 +21,31 @@
                         <label for="ukuran" class="col-sm-3 col-form-label fw-bold">Ukuran</label>
                         <div class="col-sm-3">
                            <input type="text" class="form-control text-center" placeholder="Panjang" v-model="tpanjang">
+                            <span >{{ errors.tpanjang }}</span>
                         </div>
                         <div class="col-sm-3 offset-sm-1">
-                            <input type="text" class="form-control text-center" placeholder="Lebar" v-model="tlebar">
+                            <input type="text" class="form-control text-center" placeholder="Lebar" v-model="tlebar" >
+                            <span>{{errors.tlebar}}</span>
                          </div>
                     </div>
 
                     <div class="col-12 row mt-3">
                         <label for="Jumlah" class="col-sm-3 col-form-label fw-bold">JUMLAH</label>
                         <div class="col-sm-2">
-                           <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="tjumlah">
+                           <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="tjumlah" >
 
                         </div>
 
                         <div class="col-sm-4 offset-sm-1 ">
                             <div class="input-group sm-2">
                                 <span class="input-group-text" id="harga"><i class="bi bi-cash-coin"></i></span>
-                                <input type="text"  class="form-control" placeholder="Rp. 0" aria-label="Username" :value="harga()" aria-describedby="basic-addon1">
+                                <input type="text"  class="form-control" placeholder="Rp. 0" aria-label="Username" aria-describedby="basic-addon1">
                             </div>
 
                         </div>
 
                         <div  class="col-sm-2 d-flex flex-column">
-                            <button type="button" class="bi bi-check-circle btn btn-primary" @click="masukan()"></button>
+                            <button type="button" class="bi bi-check-circle btn btn-primary" :disabled= "!meta.valid" @click="masukan()"></button>
                         </div>
                     </div>
                 </form> 
@@ -132,8 +134,31 @@
 </template>
 <script setup lang="ts">
     import { onMounted, reactive, ref } from 'vue';
+    import { useField, useForm } from 'vee-validate'
+    import * as yup from 'yup'
     import Api from '../services/api';
     
+
+    const schema = yup.object({
+      tpanjang: yup.number().required().min(3),
+      tlebar: yup.number().required()
+      
+    });
+  
+    const {setValues,meta, errors} = useForm({
+        validationSchema: schema
+    })
+
+    const { value: tpanjang , meta:metatpanjang} = useField('tpanjang')
+    const { value: tlebar , meta:metatlebar} = useField('tlebar');
+    
+    
+    console.log("Coba Panjang",schema);
+    const tranksaksi = reactive<transaksiBody[]>([]);
+    const selected = ref();
+    
+    
+    const tjumlah = ref('');
     type jenisType = {
          id_jenis_kaca : number,
          nama : string , 
@@ -149,26 +174,12 @@
         harga:number,
          
      }
-    const tranksaksi = reactive<transaksiBody[]>([]);
-    const selected = ref();
-    const tlebar = ref('');
-    const tpanjang = ref('');
-    const tjumlah = ref('');
-    const harga = (harga: number) => {
-        harga=parseInt(tlebar.value) * parseInt(tpanjang.value) * parseInt(tjumlah.value) * 1000;
-        return harga;
-    }
-    const coba = harga;
-    console.log("Ini adalah harga:",coba);
-    const masukan=()=>{
-        tranksaksi.push({
-            nama: selected.value, panjang: tpanjang.value, lebar: tlebar.value, jumlah: tjumlah.value, harga: parseInt(tlebar.value) * parseInt(tpanjang.value) * parseInt(tjumlah.value) * 1000,
-        })
+    
     selected.value = '';
     tlebar.value = '';
     tpanjang.value = '';
     tjumlah.value ='';
-    }
+    
     const dataJenis = reactive<jenisType[]>([]);
     onMounted(async() =>{
     try {
