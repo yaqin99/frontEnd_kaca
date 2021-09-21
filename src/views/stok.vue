@@ -15,7 +15,7 @@
             <div class="modal-content">
               <div class="alert alert-success modal-header text-center">
                 <h5 class="alert-heading" id="TambahJenisKaca">Tambah Jenis Kaca</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form role="form">
@@ -42,7 +42,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" :disabled="!meta.valid" @click="inputJenis()" data-bs-dismiss="modal">Simpan</button>
+                <button type="button" class="btn btn-primary"  @click="inputJenis()" data-bs-dismiss="modal" >Simpan</button>
               </div>
             </div>
           </div>
@@ -91,19 +91,21 @@
                     </div>
                     <div class="modal-body">
                       <div class="form-group  mt-3">
-                        <input type="text mt-3" v-model="stokKaca.harga" class="form-control" placeholder="Harga Beli">
+                        <input type="text mt-3" v-model="harga" class="form-control" placeholder="Harga Beli">
                       </div>
+                      <span>{{ errors.harga}}</span>
                       <div class="form-group  mt-3">
-                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Jumlah">
+                        <input type="text" v-model="jumlah"  class="form-control" placeholder="Jumlah">
                       </div>
+                      <span>{{errors.jumlah}}</span>
                       <div class="form-group  mt-3">
-                        <input type="date" v-model="stokKaca.tanggal"  class="form-control" placeholder="Jumlah">
+                        <input type="date" v-model="tanggal"  class="form-control" placeholder="Jumlah">
                       </div>
-                                   
+                      <span>{{ errors.tanggal}}</span>             
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-primary" @click="inputStok()" data-bs-dismiss="modal">Simpan</button>
+                                <button type="button" class="btn btn-primary"  @click="inputStok()" data-bs-dismiss="modal">Simpan</button>
                             </div>
                             </div>
                         </div>
@@ -165,29 +167,44 @@
         stok:'',
         harga:'',
     }
+   
+    
     
       const schema = yup.object({
-          nama:yup.string().required().max(20),
+          nama:yup.string().required().max(20).min(5),
           panjang:yup.number().required().max(200).min(1),
           lebar:yup.number().required().max(200).min(1),
-          tebal:yup.number().required().max(200).min(0.5)
+          tebal:yup.number().required().max(200).min(0.5),
+          harga:yup.number().required(),
+          jumlah:yup.number().required().min(1),
+          tanggal:yup.string().required()
        });
- 
-  
+
+      
 
     const {setValues,meta, errors} = useForm({
-      validationSchema: schema
+      validationSchema: schema ,
+      
     })
+
+    
+    
+
+    
 
     const {value:nama , meta:metaNama} = useField('nama');
     const {value:panjang , meta:metaPanjang} = useField('panjang');
     const {value:lebar , meta:metaLebar} = useField('lebar');
     const {value:tebal , meta:metaTebal} = useField('tebal');
+    const {value:harga , meta:metaHarga} = useField('harga');
+    const {value:jumlah , meta:metaJumlah} = useField('jumlah');
+    const {value:tanggal , meta:metaTanggal} = useField('tanggal');
     
     
     
-    
-    
+
+
+    let id_jenis_kaca = ref() ;
     
     let stokTampil = ref();
     let id = ref<number>();
@@ -197,7 +214,7 @@
          id.value = i ; 
          
          stokTampil.value = true ; 
-         stokKaca.id_jenis_kaca = i;
+         id_jenis_kaca.value = i;
          
          const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
          const data = await response.json();
@@ -235,11 +252,11 @@
     
     const inputJenis = async () => {
         try {
-            const data = await Api.postResource('/jenis',{nama:nama , panjang:panjang , lebar:lebar , tebal:tebal},'POST')
+            const data = await Api.postResource('/jenis',{ nama:nama.value , panjang:panjang.value , lebar:lebar.value , tebal:tebal.value},'POST')
             dataJenis.splice(0,dataJenis.length);
            const response = await fetch('http://localhost:8181/jenis');
            const sample = await response.json();
-                console.log('fgdfg',sample);
+               
                 if(sample.length > 0 ){
                     sample.forEach((d: any) => {
                       dataJenis.push({
@@ -249,7 +266,6 @@
                             lebar : d.lebar , 
                             tebal : d.tebal , 
                             stok:d.stok,
-                       
                       })
                     });
                   }
@@ -264,7 +280,7 @@
       
     const inputStok = async ()=> {
         try {
-            const data = await Api.postResource('/stok',stokKaca,'POST')
+            const data = await Api.postResource('/stok',{id_jenis_kaca:id_jenis_kaca.value,tanggal:tanggal.value,stok:jumlah.value ,harga:harga.value  },'POST')
             dataStok.splice(0,dataStok.length);
             const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
             const ambil = await response.json();
@@ -280,11 +296,7 @@
                       })
                     });
                   }
-             stokKaca.id_jenis_kaca = 0 ; 
-             stokKaca.tanggal = '' ; 
-             stokKaca.stok = '' ; 
-             stokKaca.harga= '' ; 
-    
+            
     
             const res = await fetch('http://localhost:8181/jenis');
             const sample = await res.json();

@@ -65,7 +65,7 @@
                         <tr v-for="(transaksi,index) in tableBody" :key="transaksi.id"> 
                             <td>{{ index + 1}}</td>
                             <td>{{transaksi.nama}}</td>
-                            <td>{{transaksi.panjang}} x {{ transaksi.lebar}}</td>
+                            <td>{{transaksi.panjang}} x {{transaksi.lebar}}</td>
                             <td>{{ transaksi.jumlah}}</td>
                             <td>{{ transaksi.harga}}</td>
                         </tr>
@@ -144,7 +144,8 @@
 </template>
 <script setup lang="ts">
     import { onMounted, reactive, ref } from 'vue';
-    
+    import { useField, useForm } from 'vee-validate';
+    import * as yup from 'yup'
     
     type jenisType = {
          id_jenis_kaca : number,
@@ -153,6 +154,28 @@
          lebar : number , 
          tebal : number , 
      }
+
+     const schema = yup.object({
+          nama:yup.string().required().max(20).min(5),
+          panjang:yup.number().required().max(200).min(1),
+          lebar:yup.number().required().max(200).min(1),
+          tebal:yup.number().required().max(200).min(0.5),
+          harga:yup.number().required(),
+          jumlah:yup.number().required().min(1),
+          tanggal:yup.string().required()
+       });
+    const {setValues,meta, errors} = useForm({
+      validationSchema: schema ,
+      
+    })
+
+    const {value:nama , meta:metaNama} = useField('nama');
+    const {value:panjang , meta:metaPanjang} = useField('panjang');
+    const {value:lebar , meta:metaLebar} = useField('lebar');
+    const {value:tebal , meta:metaTebal} = useField('tebal');
+    const {value:harga , meta:metaHarga} = useField('harga');
+    const {value:jumlah , meta:metaJumlah} = useField('jumlah');
+    const {value:tanggal , meta:metaTanggal} = useField('tanggal');
     
 
     const transaksiBody =  {
