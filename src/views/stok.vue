@@ -91,15 +91,15 @@
                     </div>
                     <div class="modal-body">
                       <div class="form-group  mt-3">
-                        <input type="text mt-3" v-model="harga" class="form-control" placeholder="Harga Beli">
+                        <input type="text mt-3" v-model="stokKaca.harga" class="form-control" placeholder="Harga Beli">
                       </div>
                       <span>{{ errors.harga}}</span>
                       <div class="form-group  mt-3">
-                        <input type="text" v-model="jumlah"  class="form-control" placeholder="Jumlah">
+                        <input type="text" v-model="stokKaca.stok"  class="form-control" placeholder="Jumlah">
                       </div>
                       <span>{{errors.jumlah}}</span>
                       <div class="form-group  mt-3">
-                        <input type="date" v-model="tanggal"  class="form-control" placeholder="Jumlah">
+                        <input type="date" v-model="stokKaca.tanggal"  class="form-control" placeholder="Jumlah">
                       </div>
                       <span>{{ errors.tanggal}}</span>             
                             </div>
@@ -168,6 +168,7 @@
         harga:'',
     }
    
+
     
     
       const schema = yup.object({
@@ -175,9 +176,9 @@
           panjang:yup.number().required().max(200).min(1),
           lebar:yup.number().required().max(200).min(1),
           tebal:yup.number().required().max(200).min(0.5),
-          harga:yup.number().required(),
-          jumlah:yup.number().required().min(1),
-          tanggal:yup.string().required()
+          // harga:yup.number().required(),
+          // jumlah:yup.number().required().min(1),
+          // tanggal:yup.string().required()
        });
 
       
@@ -196,9 +197,9 @@
     const {value:panjang , meta:metaPanjang} = useField('panjang');
     const {value:lebar , meta:metaLebar} = useField('lebar');
     const {value:tebal , meta:metaTebal} = useField('tebal');
-    const {value:harga , meta:metaHarga} = useField('harga');
-    const {value:jumlah , meta:metaJumlah} = useField('jumlah');
-    const {value:tanggal , meta:metaTanggal} = useField('tanggal');
+    // const {value:harga , meta:metaHarga} = useField('harga');
+    // const {value:jumlah , meta:metaJumlah} = useField('jumlah');
+    // const {value:tanggal , meta:metaTanggal} = useField('tanggal');
     
     
     
@@ -214,9 +215,9 @@
          id.value = i ; 
          
          stokTampil.value = true ; 
-         id_jenis_kaca.value = i;
+        stokKaca.id_jenis_kaca = i;
          
-         const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
+         const response = await fetch('http://localhost:8181/stok/history/' + id.value);
          const data = await response.json();
                 dataStok.splice(0,dataStok.length)
                 if(data.length > 0 ){
@@ -244,17 +245,11 @@
     
 
     
-    console.log('ini kacanya ')
-    console.log(stokKaca)
-
-
-
-    
     const inputJenis = async () => {
         try {
-            const data = await Api.postResource('/jenis',{ nama:nama.value , panjang:panjang.value , lebar:lebar.value , tebal:tebal.value},'POST')
+            const data = await Api.postResource('/jenis',{nama:nama.value , panjang:panjang.value , lebar:lebar.value , tebal:tebal.value},'POST')
             dataJenis.splice(0,dataJenis.length);
-           const response = await fetch('http://localhost:8181/jenis');
+           const response = await fetch('http://localhost:8181/jenis/listjenis');
            const sample = await response.json();
                
                 if(sample.length > 0 ){
@@ -269,7 +264,12 @@
                       })
                     });
                   }
-                 
+                
+                nama.value = '' ; 
+                panjang.value = '' ; 
+                lebar.value = '' ; 
+                tebal.value = '' ; 
+                
         }
         catch(err){
             console.log(err)
@@ -280,9 +280,9 @@
       
     const inputStok = async ()=> {
         try {
-            const data = await Api.postResource('/stok',{id_jenis_kaca:id_jenis_kaca.value,tanggal:tanggal.value,stok:jumlah.value ,harga:harga.value  },'POST')
+            const data = await Api.postResource('/stok',stokKaca,'POST')
             dataStok.splice(0,dataStok.length);
-            const response = await fetch('http://localhost:8181/tampil/stok/history/' + id.value);
+            const response = await fetch('http://localhost:8181/stok/history/' + id.value);
             const ambil = await response.json();
                 dataStok.splice(0,dataStok.length)
                 if(ambil.length > 0 ){
@@ -296,9 +296,12 @@
                       })
                     });
                   }
-            
+
+                stokKaca.tanggal = '' ; 
+                stokKaca.stok = '' ; 
+                stokKaca.harga = '' ; 
     
-            const res = await fetch('http://localhost:8181/jenis');
+            const res = await fetch('http://localhost:8181/jenis/listjenis');
             const sample = await res.json();
             dataJenis.splice(0,dataJenis.length)
                 if(sample.length > 0 ){
@@ -320,11 +323,6 @@
         }
     };
 
-    
-    // const tampilStok = async () => {
-    //     const url = await'/tampil/stok/history/' + id.value ;
-    //     const ambil = await Api.getStok(url,dataStokId)
-    // };
      type jenisType = {
          id:number,
          nama : string , 
@@ -335,27 +333,29 @@
      }
     
     const dataJenis = reactive<jenisType[]>([])
-    console.log('inji jenisa')
+    console.log('Ini Data Jenis')
     console.log(dataJenis)
 
-     onMounted(async() =>{
+
+    onMounted(async() =>{
     
-      const response = await fetch('http://localhost:8181/jenis');
+      const response = await fetch('http://localhost:8181/jenis/listjenis');
       const data = await response.json();
-                
+      
                 if(data.length > 0 ){
-                    data.forEach((d: any) => {
+                    data.forEach((sub: any) => {
                       dataJenis.push({
-                          id:d.id,
-                        nama : d.nama , 
-                        panjang : d.panjang , 
-                        lebar : d.lebar , 
-                        tebal : d.tebal , 
-                        stok:d.stok,
-                       
+                        id:sub.id,
+                        nama : sub.nama , 
+                        panjang : sub.panjang , 
+                        lebar : sub.lebar , 
+                        tebal : sub.tebal , 
+                        stok:sub.stok,
+                      
                       })
                     });
                   }
                 }
             )
+            
 </script>

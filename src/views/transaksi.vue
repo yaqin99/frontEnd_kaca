@@ -14,7 +14,7 @@
                         <div class="col-9">
                             <select  class=" col-sm-8 form-select" v-model="transaksiBody.id_jenis_kaca">
                                <option selected>Pilih Kaca</option>
-                               <option :value="jenis.id_jenis_kaca" v-for="jenis in dataJenis" :key="jenis.id">{{ jenis.nama}}</option>
+                               <option :value="jenis.id_jenis_kaca" v-for="jenis in dataJenis" :key="jenis.id"  >{{ jenis.nama}}</option>
                             </select>
                         </div>
                     </div>
@@ -155,27 +155,7 @@
          tebal : number , 
      }
 
-     const schema = yup.object({
-          nama:yup.string().required().max(20).min(5),
-          panjang:yup.number().required().max(200).min(1),
-          lebar:yup.number().required().max(200).min(1),
-          tebal:yup.number().required().max(200).min(0.5),
-          harga:yup.number().required(),
-          jumlah:yup.number().required().min(1),
-          tanggal:yup.string().required()
-       });
-    const {setValues,meta, errors} = useForm({
-      validationSchema: schema ,
-      
-    })
-
-    const {value:nama , meta:metaNama} = useField('nama');
-    const {value:panjang , meta:metaPanjang} = useField('panjang');
-    const {value:lebar , meta:metaLebar} = useField('lebar');
-    const {value:tebal , meta:metaTebal} = useField('tebal');
-    const {value:harga , meta:metaHarga} = useField('harga');
-    const {value:jumlah , meta:metaJumlah} = useField('jumlah');
-    const {value:tanggal , meta:metaTanggal} = useField('tanggal');
+   
     
 
     const transaksiBody =  {
@@ -185,6 +165,8 @@
         jumlah:'',
         harga:0,
       }
+
+    
     
     const tableBody =  {
         id_jenis_kaca: '',
@@ -202,6 +184,7 @@
     };
     const lebarInt = ref();
     const ambilLebar = () => {
+        ambilHarga()
         lebarInt.value = parseInt(transaksiBody.lebar)
        
     };
@@ -210,9 +193,19 @@
         jumlahInt.value = parseInt(transaksiBody.jumlah);
        
     };
-    const munculLah = ref()
+
+   
+   
+
+    const ambilHarga =  async () => {
+    const pathHarga = await 'http://localhost:8181/stok/harga?id=' + transaksiBody.id_jenis_kaca + '&panjang='+ panjangInt.value + '&lebar=' + lebarInt.value
+    const ambil = await fetch(pathHarga);
+    const hasil = ambil.json()
+    console.log(hasil)
+    }
+
     const total = async () => {
-      munculLah.value = true ; 
+      
       ambilJumlah()
       const hasil = await  panjangInt.value * lebarInt.value * jumlahInt.value * 1000
       transaksiBody.harga = hasil;

@@ -37,7 +37,7 @@
         }
         const idnya = i ; 
        console.log(idnya)
-        const response = await fetch('http://localhost:8181/tampil/subtransaksi/' + idnya)
+        const response = await fetch('http://localhost:8181/transaksi/subtransaksi/' + idnya)
         const data = await response.json();
         data.forEach((sub:any) => {
             subTransaksi.push({
@@ -72,7 +72,7 @@
     onMounted(async() =>{
     
     try {
-       const response = await fetch('http://localhost:8181/tampil/transaksi');
+       const response = await fetch('http://localhost:8181/transaksi');
                 const data = await response.json();
                 console.log(data);
                 if(data.length > 0 ){
