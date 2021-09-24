@@ -13,9 +13,9 @@
             <div class="col-9">
               <select v-model="Pilihan" class=" col-sm-8 form-select">
               <option disabled value="">Pilih Jenis Kaca</option>
-              <option v-for="jenis in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca">{{ jenis.nama }}</option>
-              <h1></h1>
+              <option v-for="jenis, i in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca" @click="getNama(i)">{{ jenis.nama }}</option>
               </select>
+              <h1>{{Pilihan}}</h1>
             </div>
           </div>
           <div class="col-12 row mt-3">
@@ -37,7 +37,7 @@
             <div class="col-sm-4 offset-sm-1 ">
               <div class="input-group sm-2">
                 <span class="input-group-text" id="harga"><i class="bi bi-cash-coin"></i></span>
-                <input type="text"  class="form-control" placeholder="Rp. 0" aria-label="Username" aria-describedby="basic-addon1" >
+                <input type="text"  class="form-control" placeholder="Rp. 0" aria-label="Username" aria-describedby="basic-addon1">
               </div>
             </div>
             <div  class="col-sm-2 d-flex flex-column">
@@ -105,7 +105,7 @@
               </div>
               <label for="nama" class="col-sm-3 col-form-label fw-bold mt-4">KEMBALI</label>
               <div class="col-sm-9 mt-4">
-                <input type="text" class="form-control" placeholder="Input" :value="kembali() == NaN ? 0 : kembali()">
+                <input type="text" class="form-control" placeholder="Input" :value="isNaN(kembali()) ? 0 : kembali()">
               </div>
             </div>
             <div class="col-12">
@@ -172,12 +172,12 @@
 
   const Tranksaksi = reactive<transaksiBody[]>([]);
   const dataJenis = reactive<jenisType[]>([]);
-  // 
+  console.log("ini adalah",dataJenis);
   const masukan = async () => {
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + Panjang.value + '&lebar=' + Lebar.value);
     const data = await response.json();
     Tranksaksi.push({
-      nama: dataJenis[Pilihan.value].nama , panjang: String(Panjang.value), lebar: String(Lebar.value), jumlah: String(tjumlah.value), harga: data.harga*parseInt(tjumlah.value)
+      nama: Pilihan.value , panjang: String(Panjang.value), lebar: String(Lebar.value), jumlah: String(tjumlah.value), harga: data.harga*parseInt(tjumlah.value)
     })
     Pilihan.value = '';
     Panjang.value = '1';
@@ -202,13 +202,9 @@
     const kembalian = (simpan() - bayar.value)*-1;
     return kembalian;
   }
-  // const pembayaran = async () => {
-  //   try {
-  //     const response = await Api.postResource('/transaksi', {nama: nama.value, HP: HP.value, Alamat: Alamat.value, Bayar: bayar.value, total: simpan(),}, 'POST' )
-  //   } catch (error) {
-      
-  //   }
-  // }
+  const getNama = (i: number) => {
+    return dataJenis[i].nama
+  }
   onMounted(async() =>{
     try {   
       const response = await fetch('http://localhost:8181/jenis');
