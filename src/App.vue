@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
+    // onMounted(async() =>{
+        
+    //       const response = await fetch('http://localhost:8181/stok/harga?id=1&panjang=10&lebar=10');
+    //       const data = await response.json();
+    //       console.log(data);
+    // })
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import stok from '../views/stok.vue'
-import transaksi from '../views/transaksi.vue'
+import transaksi from '../views/transaksiumar.vue'
 
 
 const routes: Array<RouteRecordRaw> = [

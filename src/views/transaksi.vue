@@ -180,8 +180,10 @@
     const  panjangInt = ref();
     const ambilPanjang = ()=> {
         panjangInt.value =  parseInt(transaksiBody.panjang)
+        return panjangInt.value;
       
     };
+    console.log('panjang'+ ambilPanjang());
     const lebarInt = ref();
     const ambilLebar = () => {
         ambilHarga()
@@ -193,15 +195,19 @@
         jumlahInt.value = parseInt(transaksiBody.jumlah);
        
     };
-
    
-   
+    onMounted(async() =>{
+        
+          const response = await fetch('http://localhost:8181/stok/harga?id=${transaksiBody.id_jenis_kaca}${panjangInt.value}&lebar=${lebarInt.value}');
+          const data = await response.json();
+          console.log(data);
+    })
 
     const ambilHarga =  async () => {
-    const pathHarga = await 'http://localhost:8181/stok/harga?id=' + transaksiBody.id_jenis_kaca + '&panjang='+ panjangInt.value + '&lebar=' + lebarInt.value
-    const ambil = await fetch(pathHarga);
-    const hasil = ambil.json()
-    console.log(hasil)
+    const pathHarga = await fetch('http://localhost:8181/stok/harga?id=${transaksiBody.id_jenis_kaca}&panjang=${panjangInt.value}&lebar=${lebarInt.value}')
+    // const ambil = await fetch(pathHarga);
+    const hasil = pathHarga.json();
+    console.log("mencoba",hasil)
     }
 
     const total = async () => {
