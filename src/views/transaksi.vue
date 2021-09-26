@@ -13,9 +13,9 @@
             <div class="col-9">
               <select v-model="Pilihan" class=" col-sm-8 form-select">
               <option disabled value="">Pilih Jenis Kaca</option>
-              <option v-for="jenis in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca">{{ jenis.nama }}</option>
-              <h1></h1>
+              <option v-for="jenis, i in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca" @click="getNama(i)">{{ jenis.nama }}</option>
               </select>
+              <h1>{{Pilihan}}</h1>
             </div>
           </div>
           <div class="col-12 row mt-3">
@@ -41,7 +41,7 @@
               </div>
             </div>
             <div  class="col-sm-2 d-flex flex-column">
-              <button type="button" class="bi bi-check-circle btn btn-primary" :disabled= "!meta.valid" @click="masukan()">
+              <button type="button" class="bi bi-check-circle btn btn-primary" :disabled= "!meta.valid" @click="masukan(), getNama()">
               </button>
             </div>
           </div>
@@ -61,7 +61,7 @@
               <td>{{i+1}}</td>
               <td>{{kaca.nama}}</td>
               <td>{{kaca.panjang}} x {{kaca.lebar}}</td>
-              <td>{{kaca.jumlah}}</td>
+              <td>{{ kaca.jumlah}}</td>
               <td>{{kaca.harga}}</td>
             </tr>
           </tbody>
@@ -73,22 +73,22 @@
             <div class="col-12 row mt-3">
               <label class="col-sm-3 col-form-label fw-bold">Nama</label>
               <div class="col-sm-9 mt-1">
-                <div class="input-group input-group-sm">
+                <div class="input-group input-group-sm" >
                   <button class="input-group-text">
                   <span class="fas fa-search"></span>
                   </button>
-                  <input   type="text" class="form-control" v-model="namaPembeli" placeholder="Username">
+                  <input   type="text" class="form-control" placeholder="Username" v-model="nama">
                 </div>                               
               </div>
               <label for="hp" class="col-sm-3 col-form-label fw-bold">HP</label>
                 <div class="col-sm-9 mt-1">
                   <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" v-model="noHp" placeholder="Input">
+                    <input type="text" class="form-control" placeholder="Input" v-model="HP">
                   </div>
                 </div>
                   <label for="alamat" class="col-sm-3 col-form-label fw-bold">Alamat</label>
                   <div class="col-sm-9 mt-1">
-                    <textarea class="form-control form-control-xg" v-model="alamat" id="addres"></textarea>
+                    <textarea class="form-control form-control-xg" id="addres" v-model="Alamat"></textarea>
                   </div>
             </div>
           </div>
@@ -101,11 +101,11 @@
             <div class=" col-12 row mt-2 py-4 px-2 bg-secondary" style=" border-radius: 15px;">
               <label for="bayar" class="col-sm-3 col-form-label fw-bold ">BAYAR</label>
               <div class="col-sm-9 ">
-                <input type="text" class="form-control" v-model="bayar" placeholder="Input">
+                <input type="text" class="form-control" placeholder="Input" v-model="bayar">
               </div>
               <label for="nama" class="col-sm-3 col-form-label fw-bold mt-4">KEMBALI</label>
               <div class="col-sm-9 mt-4">
-                <input type="text" class="form-control"  :value="kembalian.value" placeholder="Input">
+                <input type="text" class="form-control" placeholder="Input" :value="isNaN(kembali()) ? 0 : kembali()">
               </div>
             </div>
             <div class="col-12">
@@ -119,7 +119,7 @@
               </div>
             </div>
           </div>
-        </form>            
+        </form>           
       </div>
     </div>
   </div>
@@ -144,6 +144,7 @@
     Panjang: yup.number().required().min(1).max(200),
     Lebar: yup.number().required().min(1).max(200)
   });
+  
   const {setValues,meta, errors} = useForm({
     validationSchema: schema
   })
@@ -153,14 +154,6 @@
    
   const Pilihan = ref();
   const tjumlah = ref('');
-  const namaPembeli = ref('');
-  const noHp = ref();
-  const alamat = ref();
-  const harganya = ref()
-  const bayar = ref()
-  const kembalian = ref();
-  kembalian.value = bayar.value - harganya.value
-  console.log(kembalian.value)
   
   type jenisType = {
     id_jenis_kaca : number,
@@ -180,26 +173,69 @@
 
   const Tranksaksi = reactive<transaksiBody[]>([]);
   const dataJenis = reactive<jenisType[]>([]);
-  
+  console.log("ini adalah",dataJenis[1]);
+
   const masukan = async () => {
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + Panjang.value + '&lebar=' + Lebar.value);
     const data = await response.json();
-    
+    const ambil = await fetch('http://localhost:8181/jenis');
+    const dapat = await ambil.json();
+    let nama = '';
+    for (let i = 0; i < dataJenis.length; i++) {
+      if(Pilihan.value == dapat[i].id){
+        nama = dapat[i].nama;
+      }
+    }
     Tranksaksi.push({
-      nama: dataJenis[Pilihan.value].nama , panjang: String(Panjang.value), lebar: String(Lebar.value), jumlah: String(tjumlah.value), harga: data.harga*parseInt(tjumlah.value)
+      nama: String(nama), panjang: String(Panjang.value), lebar: String(Lebar.value), jumlah: String(tjumlah.value), harga: data.harga*parseInt(tjumlah.value)
     })
     Pilihan.value = '';
-    Panjang.value = '';
-    Lebar.value = '';
-    tjumlah.value= '';
-    harganya.value = data.harga;
-    console.log(harganya.value)
+    Panjang.value = '1';
+    Lebar.value = '1';
+    tjumlah.value= '1';
+  }
+  
+  const nama = ref();
+  const HP = ref();
+  const Alamat = ref();
+  const bayar = ref();
+  console.log(bayar);
+
+  const simpan = () => {
+  var Total = 0;
+   for (let index = 0; index < Tranksaksi.length; index++) {
+      Total = Total + Tranksaksi[index].harga;
+    }
+    return Total;
+  }
+  
+  const kembali = () =>{
+    const kembalian = (simpan() - bayar.value)*-1;
+    return kembalian;
+  }
+  
+  const getNama = async () => {
+    try {
+      const response = await (fetch('http://localhost:8181/jenis'))
+      const data = await response.json()
+      let nama = '';
+      for (let i = 0; i < dataJenis.length; i++) {
+        if(Pilihan.value == data[i].id){
+          nama = data[i].nama;
+        }
+      }
+    } 
+    catch (error) {
+      console.log(error);
+    }
+    return nama;
   }
   
   onMounted(async() =>{
     try {   
       const response = await fetch('http://localhost:8181/jenis');
       const data = await response.json();
+      console.log(data[0].id);
       if(data.length > 0 ){
         data.forEach((d: any) => {
           dataJenis.push({ 
@@ -209,8 +245,7 @@
             lebar : d.lebar, 
             tebal : d.tebal
           })
-        });
-       
+        });  
       }
     }
     catch(err){
