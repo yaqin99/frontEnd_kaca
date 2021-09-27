@@ -61,11 +61,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(jenis, i) in dataJenis" :key="jenis.id">
+            <tr v-for="(jenis, i) in dataJenis" :key="jenis.id" @click="munculTableStok(jenis.id)">
               <td>{{ i + 1}}</td>
-              <td @click="munculTableStok(jenis.id)">{{ jenis.nama}}</td>
+              <td>{{ jenis.nama}}</td>
               <td>{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
               <td>{{ jenis.stok }}</td>
+              
             </tr>    
           </tbody>
         </table>
@@ -118,6 +119,7 @@
                             <th>Tanggal</th>
                             <th>Harga Beli</th>
                             <th>Jumlah</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,13 +127,59 @@
                             <td>{{stk.tanggal}}</td>
                             <td>{{'Rp.' + stk.harga}}</td>
                             <td>{{stk.stok}}</td>  
-                            
+                            <td><button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit" @click="edit()">Edit</button></td>
                         </tr>                      
                     </tbody>
                 </table>
                 
             </div>
         </div>
+
+        <!-- MODAL EDIT  -->
+
+        <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="TambahJenisKaca" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="alert alert-success modal-header text-center">
+                <h5 class="alert-heading" id="TambahJenisKaca">Tambah Jenis Kaca</h5>
+                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form role="form">
+                  <div class="form-group ">
+                    <label for="tanggal" class="form-label">Tanggal</label>
+                    <input type="text" class="form-control "   id="tanggal" >
+                   
+                  </div>
+                  
+                  <div class="form-group ">
+                    <label for="harga_beli" class="form-label">Harga Beli</label>
+                    <input type="text" class="form-control "  v-model="nama" id="harga_beli" >
+                   
+                  </div>
+                  <div class="form-group ">
+                    <label for="harga_jual" class="form-label">Harga Jual</label>
+                    <input type="text" class="form-control " v-model="nama" id="harga_jual" >
+                   
+                  </div>
+                  <div class="form-group ">
+                    <label for="jumlah_beli" class="form-label">Jumlah Beli</label>
+                    <input type="text" class="form-control "  v-model="nama" id="jumlah_beli" >
+                   
+                  </div>
+                  
+                  
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary"  @click="inputJenis()" data-bs-dismiss="modal" >Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <div class="row">
             <div class="col-4">
                 <nav aria-label="d-grid gap-2 d-md-block">
@@ -209,13 +257,16 @@
     
     let stokTampil = ref();
     let id = ref<number>();
-   
+    let idnya = ref();  
+  
     const dataStok = reactive<stokType[]>([])
+    const editModal = reactive<stokType[]>([])
+    
     const munculTableStok = async (i:number) => {
          id.value = i ; 
-         
+         idnya.value = i;
          stokTampil.value = true ; 
-        stokKaca.id_jenis_kaca = i;
+         stokKaca.id_jenis_kaca = i;
          
          const response = await fetch('http://localhost:8181/stok/history/' + id.value);
          const data = await response.json();
@@ -237,6 +288,23 @@
         stokTampil.value = false ; 
     };
 
+    const edit = async () => {
+      const response = await fetch('http://localhost:8181/stok/history/' + id.value);
+         const data = await response.json();
+                editModal.splice(0,editModal.length)
+                if(data.length > 0 ){
+                    data.forEach((d: any) => {
+                      editModal.push({
+                       id_jenis_kaca:d.id_jenis_kaca,
+                       tanggal:d.tanggal, 
+                       stok:d.stok,
+                       harga:d.harga,
+                       
+                      })
+                    });
+                  }
+                  console.log(editModal)
+    };
        
     const idStok = ref()
     const tambahStok = ()=> {
