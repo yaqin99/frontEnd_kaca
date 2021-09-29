@@ -13,7 +13,7 @@
             <div class="col-9">
               <select v-model="Pilihan" class=" col-sm-8 form-select">
               <option disabled value="">Pilih Jenis Kaca</option>
-              <option v-for="jenis, i in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca" @click="getNama(i)">{{ jenis.nama }}</option>
+              <option v-for="jenis in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca" @click="getNama(jenis.id_jenis_kaca)">{{ jenis.nama }}</option>
               </select>
             </div>
           </div>
@@ -213,8 +213,10 @@
     return kembalian;
   }
   
-  const getNama = async () => {
+  const idnyaNiBooss = ref()
+  const getNama = async (i:number) => {
     try {
+      idnyaNiBooss.value = i;
       const response = await (fetch('http://localhost:8181/jenis'))
       const data = await response.json()
       let nama = '';
@@ -283,9 +285,44 @@
    lastArr.value = pembeli.pop();
       const tranksaksi = await Api.postResource('/transaksi',{id_pembeli:lastArr.value.id, tanggal:dateTime,total: simpan(), bayar: bayar.value, kembali: kembali()},'POST')
       Tranksaksi.splice(0,Tranksaksi.length)
+
+      tambahDetail()
     } 
     catch (error) {
       console.log(error)
     }
   }
+  type dataTransaksiType = {
+        nama : string , 
+        hp : number , 
+        alamat : string ,
+        total:number,
+        tanggal:string,
+        id:number,
+    }
+  const dataTransaksi = reactive<dataTransaksiType[]>([])
+
+
+  const detilLastArr = ref()
+  const tambahDetail = async () => {
+    const response = await fetch('http://localhost:8181/transaksi');
+                const data = await response.json();
+                console.log(data);
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataTransaksi.push({
+                          nama:d.nama, 
+                          hp:d.hp , 
+                          alamat:d.alamat,
+                          total:d.total, 
+                          tanggal:d.tanggal, 
+                          id:d.id,
+                      })
+                    });
+                  }
+            const akhir = dataTransaksi.pop()
+            detilLastArr.value = akhir ; 
+
+    const masukan = await Api.postResource('/detil', { id_transaksi:detilLastArr.value.id , id_jenis_kaca:idnyaNiBooss.value , panjang:Tranksaksi.panjang ,  })
+  };
 </script>
