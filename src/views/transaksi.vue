@@ -251,14 +251,38 @@
       console.log(err)
     }
   })
-  console.log(Pilihan.value);
+  type pembeliType = {
+    nama:string , 
+    hp:number, 
+    alamat:string,
+    id:number,
+  }
+  const lastArr = ref()
+  const pembeli = reactive<pembeliType[]>([]);
+
   const inputPembeli = async () => {
     try {
       const data = await Api.postResource('/pembeli',{nama:nama.value, hp:HP.value, alamat: Alamat.value},'POST')
       nama.value= '';
       HP.value = '';
       Alamat.value = '';
-      const tranksaksi = await Api.postResource('/transaksi',{total: simpan(), bayar: bayar.value, kembali: kembali()},'POST')
+      let today = new Date();
+      let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      let dateTime = date+' '+time;
+      const mengambil = await fetch('http://localhost:8181/pembeli/pembeli');
+      const sample = await mengambil.json();
+      sample.forEach((x:any) => {
+        pembeli.push({
+          id:x.id,
+          nama:x.nama,
+          hp:x.hp,
+          alamat:x.alamat,
+        })
+    });
+   lastArr.value = pembeli.pop();
+      const tranksaksi = await Api.postResource('/transaksi',{id_pembeli:lastArr.value.id, tanggal:dateTime,total: simpan(), bayar: bayar.value, kembali: kembali()},'POST')
+      Tranksaksi.splice(0,Tranksaksi.length)
     } 
     catch (error) {
       console.log(error)
