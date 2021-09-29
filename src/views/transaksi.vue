@@ -15,7 +15,6 @@
               <option disabled value="">Pilih Jenis Kaca</option>
               <option v-for="jenis, i in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca" @click="getNama(i)">{{ jenis.nama }}</option>
               </select>
-              <h1>{{Pilihan}}</h1>
             </div>
           </div>
           <div class="col-12 row mt-3">
@@ -110,7 +109,7 @@
             </div>
             <div class="col-12">
               <div class="row">
-                <div class=" col-5  d-flec d-flex-column rounded btn btn-primary btn-md mt-2">
+                <div class=" col-5  d-flec d-flex-column rounded btn btn-primary btn-md mt-2" @click="inputPembeli()">
                   <span>SIMPAN</span>                                
                 </div> 
                 <div class=" col-5 offset-1 d-flec d-flex-column rounded btn btn-danger btn-md mt-2">
@@ -253,5 +252,16 @@
     }
   })
   console.log(Pilihan.value);
-
+  const inputPembeli = async () => {
+    try {
+      const data = await Api.postResource('/pembeli',{nama:nama.value, hp:HP.value, alamat: Alamat.value},'POST')
+      nama.value= '';
+      HP.value = '';
+      Alamat.value = '';
+      const tranksaksi = await Api.postResource('/transaksi',{total: simpan(), bayar: bayar.value, kembali: kembali()},'POST')
+    } 
+    catch (error) {
+      console.log(error)
+    }
+  }
 </script>
