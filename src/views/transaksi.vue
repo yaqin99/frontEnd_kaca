@@ -323,6 +323,6 @@
             const akhir = dataTransaksi.pop()
             detilLastArr.value = akhir ; 
 
-    const masukan = await Api.postResource('/detil', { id_transaksi:detilLastArr.value.id , id_jenis_kaca:idnyaNiBooss.value , panjang:Tranksaksi.panjang ,  })
+    // const masukan = await Api.postResource('/detil', { id_transaksi:detilLastArr.value.id , id_jenis_kaca:idnyaNiBooss.value , panjang:Tranksaksi.panjang ,  })
   };
 </script>

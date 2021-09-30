@@ -58,15 +58,17 @@
               <th>Nama</th>
               <th>Ukuran</th>
               <th>Total Stok</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(jenis, i) in dataJenis" :key="jenis.id" @click="munculTableStok(jenis.id)">
-              <td>{{ i + 1}}</td>
-              <td>{{ jenis.nama}}</td>
-              <td>{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
-              <td>{{ jenis.stok }}</td>
-              
+            <tr v-for="(jenis, i) in dataJenis" :key="jenis.id" >
+              <td @click="munculTableStok(jenis.id)">{{ i + 1}}</td>
+              <td @click="munculTableStok(jenis.id)">{{ jenis.nama}}</td>
+              <td @click="munculTableStok(jenis.id)">{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
+              <td @click="munculTableStok(jenis.id)">{{ jenis.stok }}</td>
+              <!-- SAYA BUAT SEPERTI INI SEBAB KALAU TR NYA YANG DI BERI FUNGSI MUNCUL TABLE TOMBOL EDIT TIDAK BISA DI AKSES  -->
+              <td><button type="button" class="btn btn-info" @click="editJenis()" data-bs-toggle="modal" data-bs-target="#editJenis" >Edit</button></td>
             </tr>    
           </tbody>
         </table>
@@ -189,7 +191,51 @@
                     </ul>
                 </nav>
             </div>
-        </div>       
+        </div>    
+
+        <!-- MODAL EDIT JENIS KACA  -->
+
+        <div class="modal fade" id="editJenis" tabindex="-1" aria-labelledby="editJenis" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="alert alert-warning modal-header text-center">
+                <h5 class="alert-heading" id="TambahJenisKaca">Edit Jenis Kaca</h5>
+                <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form role="form">
+                  <div class="form-group ">
+                    <label class="form-label">Nama Kaca</label>
+                    <input type="text" class="form-control " v-model="editNama" id="editNama" >
+                    <span>{{errors.nama}}</span>
+                  </div>
+                  <div class="col-12 row mt-3">
+                    <label class="col-sm-3 col-form-label fw-bold">Ukuran(cm)</label>
+                    <div class="col-sm-3">
+                      <input type="text" v-model="editPanjang"  id="editPanjang" class="form-control text-center" placeholder="Panjang">
+                    <span>{{ errors.panjang}}</span>
+                    </div>
+                    <div class="col-sm-3 ">
+                      <input type="text" v-model="editLebar" id="editLebar" class="form-control text-center" placeholder="Lebar">
+                    <span>{{ errors.lebar}}</span>
+                    </div>
+                    <div class="col-sm-3 ">
+                      <input type="text" v-model="editTebal" id="editTebal" class="form-control text-center" placeholder="Tebal">
+                    <span>{{ errors.tebal}}</span>
+                    </div>
+                    
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary"  @click="inputJenis()" data-bs-dismiss="modal" >Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
     </div>
 
     
@@ -249,8 +295,14 @@
     // const {value:jumlah , meta:metaJumlah} = useField('jumlah');
     // const {value:tanggal , meta:metaTanggal} = useField('tanggal');
     
+    const editPanjang = ref() ; 
+    const editLebar = ref() ; 
+    const editTebal = ref();
+    const editNama = ref('');
     
-    
+
+
+
 
 
     let id_jenis_kaca = ref() ;
@@ -273,17 +325,29 @@
                 dataStok.splice(0,dataStok.length)
                 if(data.length > 0 ){
                     data.forEach((d: any) => {
-                      dataStok.push({
-                       id_jenis_kaca:d.id_jenis_kaca,
-                       tanggal:d.tanggal, 
-                       stok:d.stok,
-                       harga:d.harga,
-                       
-                      })
+                      edit
                     });
                   }
          
     };
+    const idJenis = ref();
+    const editJenis = async (i:number) => {
+        const response = await fetch('http://localhost:8181/jenis/' + idJenis);
+        const data = await response.json();
+                idJenis.value = i ; 
+                if(data.length > 0 ){
+                    data.forEach((sub: any) => {
+                      editNama.value = sub.nama ;
+                      editPanjang.value = sub.panjang ;
+                      editLebar.value = sub.lebar ;
+                      editTebal.value = sub.tebal ;
+                    });
+                  }
+    };
+
+
+
+
     const tableStokHide = () => {
         stokTampil.value = false ; 
     };
@@ -360,7 +424,6 @@
                        tanggal:d.tanggal, 
                        stok:d.stok,
                        harga:d.harga,
-                       
                       })
                     });
                   }
