@@ -67,14 +67,17 @@
     };
 
     const dataTransaksi = reactive<dataTransaksiType[]>([])
-
-
+    const jumlahData = ref();
+    const paging = Math.ceil(jumlahData.value / 5 );
+    
     onMounted(async() =>{
     
     try {
-       const response = await fetch('http://localhost:8181/transaksi');
+                const ambilArr = await fetch('http://localhost:8181/transaksi/biasa');
+                const result = await ambilArr.json();
+                jumlahData.value = result;
+                const response = await fetch('http://localhost:8181/transaksi');
                 const data = await response.json();
-                console.log(data);
                 if(data.length > 0 ){
                     data.forEach((d:any) => {
                       dataTransaksi.push({
@@ -141,11 +144,9 @@
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+
+                        <li v-for="(page , index) in (result) " :key="index"  class="page-item"><a class="page-link" href="#">{{ index }}</a></li>
+                        
                         <li class="page-item">
                         <a class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
