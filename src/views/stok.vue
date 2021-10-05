@@ -29,15 +29,26 @@ let idnya = ref();
 const dataStok = reactive<stokType[]>([])
 const editModal = reactive<stokType[]>([])
 
+// const jumlahData = ref();
+
+const stokPage = ref([1])
+const index = ref()
 const munculTableStok = async (i:number) => {
     id.value = i ; 
     idnya.value = i;
     stokTampil.value = true ; 
     id_jenis_kaca.value = i;
+    const dipilih = true ; 
+    const ambilArr = await fetch('http://localhost:8181/stok/pagingHistory/' + id.value);
+    const result = await ambilArr.json();
+    const arrLength = await result.length;
+    const pagingLength = Math.ceil(arrLength / 3);
+    stokPage.value.length = pagingLength;
+    console.log(pagingLength)
+
     
     const response = await fetch('http://localhost:8181/stok/history/' + id.value);
     const data = await response.json();
-    console.log(data)
           dataStok.splice(0,dataStok.length)
           if(data.length > 0 ){
               data.forEach((d: any) => {
@@ -62,6 +73,9 @@ type editJenisType = {
 }
 const idJenis = ref();
 const editJenisBody = reactive<editJenisType[]>([])
+const jumlahData = ref();
+
+const coba = ref([1])
 
 const editJenis = async (i:number) => {
   idJenis.value = i ; 
@@ -208,7 +222,130 @@ console.log('Ini Data Jenis')
 console.log(dataJenis)
 
 
+    const indexnya = ref()
+    const indexStok = ref()
+const halamanStokAktif = async (i:number) => {
+        const terpilih = true ; 
+        indexnya.value = i;
+        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + indexStok.value ;
+        dataStok.splice(0,dataStok.length);
+        const response = await fetch(path);
+            const data = await response.json();
+            if(data.length > 0 ){
+                data.forEach((d:any) => {
+                    dataStok.push({
+                    id_jenis_kaca:d.id_jenis_kaca,
+                    tanggal:d.tanggal ,
+                    stok:d.stok, 
+                    harga_beli:d.harga_beli, 
+                    harga_jual:d.harga_jual,
+                })
+            });
+            }
+        }
+    
+    const halamanStokTurun = async () => {
+         dataStok.splice(0,dataStok.length);
+        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + (indexStok.value - 1) ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataStok.push({
+                      id_jenis_kaca:d.id_jenis_kaca,
+                      tanggal:d.tanggal ,
+                      stok:d.stok, 
+                      harga_beli:d.harga_beli, 
+                      harga_jual:d.harga_jual,
+                    })
+                    });
+                  }
+    }
+    const halamanStokNaik = async () => {
+         dataStok.splice(0,dataStok.length);
+        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + (indexStok.value + 1) ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataStok.push({
+                      id_jenis_kaca:d.id_jenis_kaca,
+                      tanggal:d.tanggal ,
+                      stok:d.stok, 
+                      harga_beli:d.harga_beli, 
+                      harga_jual:d.harga_jual,
+                    })
+                    });
+                  }
+    }
+    const halamanAktif = async (i:number) => {
+        const terpilih = true ; 
+        indexnya.value = i;
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + indexnya.value ;
+        dataJenis.splice(0,dataJenis.length);
+        const response = await fetch(path);
+            const data = await response.json();
+            if(data.length > 0 ){
+                data.forEach((d:any) => {
+                    dataJenis.push({
+                          id:d.id,
+                          nama : d.nama , 
+                          panjang : d.panjang , 
+                          lebar : d.lebar , 
+                          tebal : d.tebal , 
+                          stok:d.stok,
+                })
+            });
+            }
+        }
+    
+    const halamanTurun = async () => {
+         dataJenis.splice(0,dataJenis.length);
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + (indexnya.value - 1) ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataJenis.push({
+                          id:d.id,
+                          nama : d.nama , 
+                          panjang : d.panjang , 
+                          lebar : d.lebar , 
+                          tebal : d.tebal , 
+                          stok:d.stok,
+                      })
+                    });
+                  }
+    }
+    const halamanNaik = async () => {
+         dataJenis.splice(0,dataJenis.length);
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + (indexnya.value + 1) ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataJenis.push({
+                          id:d.id,
+                          nama : d.nama , 
+                          panjang : d.panjang , 
+                          lebar : d.lebar , 
+                          tebal : d.tebal , 
+                          stok:d.stok,
+                      })
+                    });
+                  }
+    }
+
 onMounted(async() =>{
+const ambilArr = await fetch('http://localhost:8181/jenis/totalJenis');
+const result = await ambilArr.json();
+const arrLength = await result.length;
+const pagingLength = Math.ceil(arrLength / 5);
+coba.value.length = pagingLength;
 
 const response = await fetch('http://localhost:8181/jenis/listjenis');
 const data = await response.json();
@@ -228,7 +365,8 @@ const data = await response.json();
             }
           }
       )
-      
+
+
 </script>
 
 
@@ -310,6 +448,40 @@ const data = await response.json();
                         </tr>                      
                     </tbody>
                 </table>
+
+                <!-- PAGINATION STOK -->
+                <div class="row">
+                    <div class="col-4">
+                        <nav aria-label="d-grid gap-2 d-md-block">
+                            <ul class="pagination">
+                                <li class="page-item" v-if="indexStok != 1" @click="halamanStokTurun()" >
+                                <a class="page-link" href="#" aria-label="Previous" >
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                                </li>
+
+                                <li class="page-item"  v-if="indexStok != 1">
+                                <a class="page-link"  aria-label="Next">
+                                    <span aria-hidden="true">Back</span>
+                                </a>
+                                </li>
+
+                                <li :class="dipilih == true ? 'border border-primarys' : 'gakAda'" v-for="(pagingStok, i) in stokPage " :key="i"  @click="halamanStokAktif(i + 1)"  class="page-item"><a class="page-link" href="#">{{ i + 1 }}</a></li>
+                              
+                                <li class="page-item"  v-if="indexStok !== stokPage.length">
+                                <a class="page-link"  aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                                </li>
+                                <li class="page-item" v-if="indexstok !== stokPage.length" @click="halamanStokNaik()" >
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+              </div>   
                 
             </div>
         </div>
@@ -323,8 +495,30 @@ const data = await response.json();
             <div class="col-4">
                 <nav aria-label="d-grid gap-2 d-md-block">
                     <ul class="pagination">
-                        <li class="page-item col-3 me-sm-5"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item col-3 text-center"><a class="page-link" href="#">Next</a></li>
+                        <li class="page-item" v-if="indexnya != 1" @click="halamanTurun()" >
+                        <a class="page-link" href="#" aria-label="Previous" >
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        </li>
+
+                        <li class="page-item"  v-if="indexnya != 1">
+                        <a class="page-link"  aria-label="Next">
+                            <span aria-hidden="true">Back</span>
+                        </a>
+                        </li>
+
+                        <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , index) in coba " :key="index" :value="index+1"  @click="halamanAktif(index + 1)"  class="page-item"><a class="page-link" href="#">{{ index + 1 }}</a></li>
+                       
+                        <li class="page-item"  v-if="indexnya !== coba.length">
+                        <a class="page-link"  aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                        </a>
+                        </li>
+                        <li class="page-item" v-if="indexnya !== coba.length" @click="halamanNaik()" >
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
