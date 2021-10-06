@@ -44,7 +44,6 @@ const munculTableStok = async (i:number) => {
     const arrLength = await result.length;
     const pagingLength = Math.ceil(arrLength / 3);
     stokPage.value.length = pagingLength;
-    console.log(pagingLength)
 
     
     const response = await fetch('http://localhost:8181/stok/history/' + id.value);
@@ -102,23 +101,23 @@ const tableStokHide = () => {
   stokTampil.value = false ; 
 };
 
-const edit = async () => {
-const response = await fetch('http://localhost:8181/stok/history/' + id.value);
-    const data = await response.json();
-          editModal.splice(0,editModal.length)
-          if(data.length > 0 ){
-              data.forEach((d: any) => {
-                editModal.push({
-                  id_jenis_kaca:d.id_jenis_kaca,
-                  tanggal:d.tanggal, 
-                  stok:d.stok,
-                  harga:d.harga,
+// const edit = async () => {
+// const response = await fetch('http://localhost:8181/stok/history/' + id.value);
+//     const data = await response.json();
+//           editModal.splice(0,editModal.length)
+//           if(data.length > 0 ){
+//               data.forEach((d: any) => {
+//                 editModal.push({
+//                   id_jenis_kaca:d.id_jenis_kaca,
+//                   tanggal:d.tanggal, 
+//                   stok:d.stok,
+//                   harga:d.harga,
                   
-                })
-              });
-            }
-            console.log(editModal)
-};
+//                 })
+//               });
+//             }
+//             console.log(editModal)
+// };
   
 const idStok = ref()
 const tambahStok = ()=> {
@@ -224,13 +223,13 @@ console.log(dataJenis)
 
     const indexnya = ref()
     const indexStok = ref()
+    const terpilih = ref()
 const halamanStokAktif = async (i:number) => {
-        const terpilih = true ; 
-        indexnya.value = i;
-        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + indexStok.value ;
-        dataStok.splice(0,dataStok.length);
+         terpilih.value = true ; 
+        const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + i ;
         const response = await fetch(path);
             const data = await response.json();
+            dataStok.splice(0,dataStok.length);
             if(data.length > 0 ){
                 data.forEach((d:any) => {
                     dataStok.push({
@@ -246,7 +245,7 @@ const halamanStokAktif = async (i:number) => {
     
     const halamanStokTurun = async () => {
          dataStok.splice(0,dataStok.length);
-        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + (indexStok.value - 1) ;
+        const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + (indexStok.value - 1) ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -264,7 +263,7 @@ const halamanStokAktif = async (i:number) => {
     }
     const halamanStokNaik = async () => {
          dataStok.splice(0,dataStok.length);
-        const path = 'http://localhost:8181/stok/history/'+idnya+'?page=' + (indexStok.value + 1) ;
+        const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + (indexStok.value + 1) ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -454,7 +453,7 @@ const data = await response.json();
                     <div class="col-4">
                         <nav aria-label="d-grid gap-2 d-md-block">
                             <ul class="pagination">
-                                <li class="page-item" v-if="indexStok != 1" @click="halamanStokTurun()" >
+                                <li class="page-item" v-if="indexStok != 1"  >
                                 <a class="page-link" href="#" aria-label="Previous" >
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
@@ -466,14 +465,14 @@ const data = await response.json();
                                 </a>
                                 </li>
 
-                                <li :class="dipilih == true ? 'border border-primarys' : 'gakAda'" v-for="(pagingStok, i) in stokPage " :key="i"  @click="halamanStokAktif(i + 1)"  class="page-item"><a class="page-link" href="#">{{ i + 1 }}</a></li>
+                                <li :class="dipilih == true ? 'border border-primarys' : 'gakAda'" v-for="(pagingStok, a) in stokPage " :key="a"  @click="halamanStokAktif(a + 1)"  class="page-item"><a class="page-link" href="#">{{ a + 1 }}</a></li>
                               
                                 <li class="page-item"  v-if="indexStok !== stokPage.length">
                                 <a class="page-link"  aria-label="Next">
                                     <span aria-hidden="true">Next</span>
                                 </a>
                                 </li>
-                                <li class="page-item" v-if="indexstok !== stokPage.length" @click="halamanStokNaik()" >
+                                <li class="page-item" v-if="indexstok !== stokPage.length"  >
                                 <a class="page-link" href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
@@ -507,7 +506,7 @@ const data = await response.json();
                         </a>
                         </li>
 
-                        <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , index) in coba " :key="index" :value="index+1"  @click="halamanAktif(index + 1)"  class="page-item"><a class="page-link" href="#">{{ index + 1 }}</a></li>
+                        <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , i) in coba " :key="i"   @click="halamanAktif(i + 1)"  class="page-item"><a class="page-link" href="#">{{ i+ 1 }}</a></li>
                        
                         <li class="page-item"  v-if="indexnya !== coba.length">
                         <a class="page-link"  aria-label="Next">

@@ -71,7 +71,7 @@
 
     const coba = ref([1])
 
-    const indexnya = ref()
+    const indexnya = ref(1)
     const halamanAktif = async (i:number) => {
         const terpilih = true ; 
         indexnya.value = i;
@@ -93,9 +93,11 @@
             }
         }
     
-    const halamanTurun = async () => {
+    
+    const firstPage = async () => {
+        indexnya.value = 1 ;
          dataTransaksi.splice(0,dataTransaksi.length);
-        const path = 'http://localhost:8181/transaksi?page=' + (indexnya.value - 1) ;
+        const path = 'http://localhost:8181/transaksi?page=' + 1  ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -111,10 +113,33 @@
                       })
                     });
                   }
+        
+    }
+    const halamanTurun = async () => {
+        indexnya.value -- ;
+         dataTransaksi.splice(0,dataTransaksi.length);
+        const path = 'http://localhost:8181/transaksi?page=' + indexnya.value  ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataTransaksi.push({
+                          nama:d.nama, 
+                          hp:d.hp , 
+                          alamat:d.alamat,
+                          total:d.total, 
+                          tanggal:d.tanggal, 
+                          id:d.id,
+                      })
+                    });
+                  }
+        
     }
     const halamanNaik = async () => {
          dataTransaksi.splice(0,dataTransaksi.length);
-        const path = 'http://localhost:8181/transaksi?page=' + (indexnya.value + 1) ;
+         indexnya.value ++ ;
+        const path = 'http://localhost:8181/transaksi?page=' + indexnya.value ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -130,6 +155,28 @@
                       })
                     });
                   }
+                
+    }
+    const lastPage = async () => {
+         dataTransaksi.splice(0,dataTransaksi.length);
+         indexnya.value  = coba.value.length ;
+        const path = 'http://localhost:8181/transaksi?page=' + coba.value.length;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataTransaksi.push({
+                          nama:d.nama, 
+                          hp:d.hp , 
+                          alamat:d.alamat,
+                          total:d.total, 
+                          tanggal:d.tanggal, 
+                          id:d.id,
+                      })
+                    });
+                  }
+                
     }
     onMounted(async() =>{
     
@@ -204,13 +251,13 @@
                 </table>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                        <li class="page-item" v-if="indexnya != 1" @click="halamanTurun()" >
+                        <li class="page-item" v-if="indexnya != 1" @click="firstPage()">
                         <a class="page-link" href="#" aria-label="Previous" >
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         </li>
 
-                        <li class="page-item"  v-if="indexnya != 1">
+                        <li class="page-item"  v-if="indexnya != 1" @click="halamanTurun()">
                         <a class="page-link"  aria-label="Next">
                             <span aria-hidden="true">Back</span>
                         </a>
@@ -218,12 +265,13 @@
 
                         <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , index) in coba " :key="index" :value="index+1"  @click="halamanAktif(index + 1)"  class="page-item"><a class="page-link" href="#">{{ index + 1 }}</a></li>
                        
-                        <li class="page-item"  v-if="indexnya !== coba.length">
-                        <a class="page-link"  aria-label="Next">
+                        <li class="page-item"  v-if="indexnya !== coba.length" @click="halamanNaik()">
+                        <a class="page-link"  aria-label="Next" >
                             <span aria-hidden="true">Next</span>
                         </a>
                         </li>
-                        <li class="page-item" v-if="indexnya !== coba.length" @click="halamanNaik()" >
+
+                        <li class="page-item" v-if="indexnya !== coba.length" @click="lastPage()">
                         <a class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
