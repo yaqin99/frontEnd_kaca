@@ -5,9 +5,7 @@ import Api from '../services/api';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import ModalJenis from '../components/modalJenis.vue';
-import ModalEditJenis from '../components/modalEditJenis.vue'
 import ModalStok from '../components/modalStok.vue'
-import ModalStokEdit from '../components/modalStokEdit.vue'
 
 
 
@@ -76,22 +74,27 @@ const jumlahData = ref();
 
 const coba = ref([1])
 
+const namaEdit = ref('');
+const panjangEdit = ref('');
+const lebarEdit = ref('');
+const tebalEdit = ref('');
+const idEdit = ref(1);
+
+const isEdit = ref(false); 
+
+
 const editJenis = async (i:number) => {
-  idJenis.value = i ; 
-  const response = await fetch('http://localhost:8181/jenis?id=' + idJenis.value);
-  const data = await response.json();
+  isEdit.value = true ; 
+  const data = dataJenis[i]
+  
+  idEdit.value = data.id ; 
+  namaEdit.value = data.nama ; 
+  panjangEdit.value = data.panjang ; 
+  lebarEdit.value = data.lebar ; 
+  tebalEdit.value = data.tebal ; 
           
-          if(data.length > 0 ){
-              data.forEach((sub: any) => {
-                editJenisBody.push({
-                  nama:sub.nama , 
-                  panjang:sub.panjang , 
-                  lebar:sub.lebar,
-                  tebal:sub.tebal,
-                })
-              });
-            }
-            console.log(editJenisBody)
+          
+              
 };
 
 
@@ -125,10 +128,19 @@ const tambahStok = ()=> {
 };
 
 
+const newNama = ref('');
+const newPanjang = ref();
+const newLebar = ref() ; 
+const newTebal = ref();
 
 const inputJenis = async (el:any) => {
   try {
-      const data = await Api.postResource('/jenis',{nama:el.nama , panjang:el.panjang , lebar:el.lebar, tebal:el.tebal},'POST')
+      console.log('input called')
+      newNama.value = el.nama ; 
+      newPanjang.value = el.panjang ; 
+      newLebar.value = el.lebar ; 
+      newTebal.value = el.tebal ; 
+      const data = await Api.postResource('/jenis',{nama:newNama.value , panjang:newPanjang.value , lebar:newLebar.value, tebal:newTebal.value},'POST')
       dataJenis.splice(0,dataJenis.length);
       const response = await fetch('http://localhost:8181/jenis/listjenis');
       const sample = await response.json();
@@ -146,16 +158,37 @@ const inputJenis = async (el:any) => {
               });
             }
           
-          el.nama.value = '' ; 
-          el.panjang.value = '' ; 
-          el.lebar.value = '' ; 
-          el.tebal.value = '' ; 
-          
+         
   }
   catch(err){
       console.log(err)
   }
 }; 
+const updateJenis = async (sub:any) => {
+  console.log('update Called')
+  namaEdit.value = sub.nama ; 
+  panjangEdit.value = sub.panjang ; 
+  lebarEdit.value = sub.lebar ; 
+  tebalEdit.value = sub.tebal ; 
+  const response = await Api.putResource('/jenis/'+idEdit.value,{nama:namaEdit.value , panjang:panjangEdit.value , lebar:lebarEdit.value , tebal:tebalEdit.value} , 'PUT')
+  dataJenis.splice(0,dataJenis.length);
+  const takeAgain = await fetch('http://localhost:8181/jenis/listjenis');
+      const sample = await takeAgain.json();
+          console.log('yang di edit itu ' + namaEdit.value)
+          if(sample.length > 0 ){
+              sample.forEach((d: any) => {
+                dataJenis.push({
+                      id:d.id,
+                      nama : d.nama , 
+                      panjang : d.panjang , 
+                      lebar : d.lebar , 
+                      tebal : d.tebal , 
+                      stok:d.stok,
+                })
+              });
+            }
+  isEdit.value = false ;
+};
 
 
 
@@ -216,9 +249,21 @@ const simpanEdit = () => {
   console.log(editJenisBody)
 }
 
+const modalJenisSplice = () => {
+  newPanjang.value = '' ; 
+  newLebar.value = '' ; 
+  newNama.value = '' ; 
+  newTebal.value = '' ; 
+  isEdit.value = false ; 
+  namaEdit.value = '' ; 
+  panjangEdit.value = '' ; 
+  lebarEdit.value = '' ; 
+  tebalEdit.value = '' ; 
+}
+
+
 const dataJenis = reactive<jenisType[]>([])
-console.log('Ini Data Jenis')
-console.log(dataJenis)
+
 
 
     const indexnya = ref()
@@ -300,9 +345,10 @@ const halamanStokAktif = async (i:number) => {
             }
         }
     
-    const halamanTurun = async () => {
+    const firstPage = async () => {
+      indexnya.value = 1 ;
          dataJenis.splice(0,dataJenis.length);
-        const path = 'http://localhost:8181/jenis/listjenis?page=' + (indexnya.value - 1) ;
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + 1 ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -318,10 +364,11 @@ const halamanStokAktif = async (i:number) => {
                       })
                     });
                   }
-    }
-    const halamanNaik = async () => {
+                }
+        const halamanTurun = async () => {
+      indexnya.value -- ;
          dataJenis.splice(0,dataJenis.length);
-        const path = 'http://localhost:8181/jenis/listjenis?page=' + (indexnya.value + 1) ;
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + indexnya.value ;
        
         const response = await fetch(path);
                 const data = await response.json();
@@ -337,7 +384,48 @@ const halamanStokAktif = async (i:number) => {
                       })
                     });
                   }
-    }
+                }
+      
+        const halamanNaik = async () => {
+        indexnya.value ++ ;
+        dataJenis.splice(0,dataJenis.length);
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + indexnya.value  ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataJenis.push({
+                          id:d.id,
+                          nama : d.nama , 
+                          panjang : d.panjang , 
+                          lebar : d.lebar , 
+                          tebal : d.tebal , 
+                          stok:d.stok,
+                      })
+                    });
+                  }
+                }
+        const lastPage = async () => {
+        indexnya.value ++ ;
+        dataJenis.splice(0,dataJenis.length);
+        const path = 'http://localhost:8181/jenis/listjenis?page=' + coba.value.length  ;
+       
+        const response = await fetch(path);
+                const data = await response.json();
+                if(data.length > 0 ){
+                    data.forEach((d:any) => {
+                      dataJenis.push({
+                          id:d.id,
+                          nama : d.nama , 
+                          panjang : d.panjang , 
+                          lebar : d.lebar , 
+                          tebal : d.tebal , 
+                          stok:d.stok,
+                      })
+                    });
+                  }
+                }
 
 onMounted(async() =>{
 const ambilArr = await fetch('http://localhost:8181/jenis/totalJenis');
@@ -380,10 +468,10 @@ const data = await response.json();
       </div>
       <div class="col-sm-6 ">
         <div class="d-grid gap-2  d-md-block text-end ">
-          <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="isTambah = true" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
+          <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="modalJenisSplice()" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
         </div>
         
-        <ModalJenis @inputJenis="inputJenis"></ModalJenis>
+        <ModalJenis @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :nama="namaEdit" :panjang="panjangEdit" :tebal="tebalEdit"  :lebar="lebarEdit"  ></ModalJenis>
 
       </div>    
     </div>
@@ -396,7 +484,8 @@ const data = await response.json();
               <th>Nama</th>
               <th>Ukuran</th>
               <th>Total Stok</th>
-              <th>Aksi</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -406,7 +495,8 @@ const data = await response.json();
               <td @click="munculTableStok(jenis.id)">{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
               <td @click="munculTableStok(jenis.id)">{{ jenis.stok }}</td>
               <!-- SAYA BUAT SEPERTI INI SEBAB KALAU TR NYA YANG DI BERI FUNGSI MUNCUL TABLE TOMBOL EDIT TIDAK BISA DI AKSES  -->
-              <td><button type="button" class="btn btn-info" @click="editJenis(jenis.id)" data-bs-toggle="modal" data-bs-target="#editJenis" >Edit</button></td>
+              <td><button type="button" class="btn btn-info" @click="editJenis(i)" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca" >Edit</button></td>
+              <td><button type="button" class="btn btn-danger">Delete</button></td>
             </tr>    
           </tbody>
         </table>
@@ -494,13 +584,13 @@ const data = await response.json();
             <div class="col-4">
                 <nav aria-label="d-grid gap-2 d-md-block">
                     <ul class="pagination">
-                        <li class="page-item" v-if="indexnya != 1" @click="halamanTurun()" >
-                        <a class="page-link" href="#" aria-label="Previous" >
+                        <li class="page-item" v-if="indexnya != 1"  >
+                        <a class="page-link" href="#" aria-label="Previous" @click="firstPage()">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         </li>
 
-                        <li class="page-item"  v-if="indexnya != 1">
+                        <li class="page-item"  v-if="indexnya != 1" @click="halamanTurun()">
                         <a class="page-link"  aria-label="Next">
                             <span aria-hidden="true">Back</span>
                         </a>
@@ -508,12 +598,12 @@ const data = await response.json();
 
                         <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , i) in coba " :key="i"   @click="halamanAktif(i + 1)"  class="page-item"><a class="page-link" href="#">{{ i+ 1 }}</a></li>
                        
-                        <li class="page-item"  v-if="indexnya !== coba.length">
+                        <li class="page-item"  v-if="indexnya !== coba.length" @click="halamanNaik()">
                         <a class="page-link"  aria-label="Next">
                             <span aria-hidden="true">Next</span>
                         </a>
                         </li>
-                        <li class="page-item" v-if="indexnya !== coba.length" @click="halamanNaik()" >
+                        <li class="page-item" v-if="indexnya !== coba.length" @click="lastPage()" >
                         <a class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
@@ -524,7 +614,6 @@ const data = await response.json();
         </div>    
 
         <!-- MODAL EDIT JENIS KACA  -->
-        <ModalEditJenis :nama="editJenisBody.nama" :panjang="editJenisBody.panjang" :tebal="editJenisBody.tebal" :lebar="editJenisBody.lebar" @simpanEdit="simpanEdit"></ModalEditJenis>
 
 
     </div>

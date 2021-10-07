@@ -1,27 +1,6 @@
 export default class Api {
     private static host = 'http://localhost:8181';
 
-   public static getTampil(path:string,arr:any):Promise<any>{
-       return new Promise (async (resolve,reject)=>{
-            try {
-                const response = await fetch(this.host + path);
-                const data = await response.json();
-                
-                if(data.length > 0 ){
-                    data.forEach((d: any) => {
-                      arr.push({
-                        nama : d.nama , 
-                        hp : d.hp, 
-                        alamat : d.alamat,
-                      })
-                    });
-                  }
-            }
-            catch(err){
-                reject(err)
-            }
-       });
-   }
    
 
    

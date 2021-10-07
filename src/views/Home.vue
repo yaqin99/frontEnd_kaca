@@ -134,8 +134,7 @@
                       })
                     });
                   }
-        
-    }
+                 }
     const halamanNaik = async () => {
          dataTransaksi.splice(0,dataTransaksi.length);
          indexnya.value ++ ;
