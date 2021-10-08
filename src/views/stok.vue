@@ -190,6 +190,29 @@ const updateJenis = async (sub:any) => {
   isEdit.value = false ;
 };
 
+const idDelete = ref() ; 
+const ambilId = (id:number) => {
+idDelete.value = id ; 
+};
+const deleteJenis = async () => {
+      const hapusStok = await Api.deleteResource('/jenis/' + idDelete.value , 'DELETE');
+      const hapus = await Api.deleteResource('/jenis/'+ idDelete.value , 'DELETE');
+      dataJenis.splice(0,dataJenis.length)
+      const takeAgain = await fetch('http://localhost:8181/jenis/listjenis');
+      const sample = await takeAgain.json();
+          if(sample.length > 0 ){
+              sample.forEach((d: any) => {
+                dataJenis.push({
+                      id:d.id,
+                      nama : d.nama , 
+                      panjang : d.panjang , 
+                      lebar : d.lebar , 
+                      tebal : d.tebal , 
+                      stok:d.stok,
+                })
+              });
+            }
+};
 
 
 const inputStok = async (sam:any)=> {
@@ -460,6 +483,8 @@ const data = await response.json();
 
 <template>
   <div class="container"> 
+     <ModalDelete nama="Yaqin"></ModalDelete>
+
     <div class="row  mt-5">
       <div class="col-sm-6">
         <router-link to="/" class="btn btn-info">
@@ -470,7 +495,6 @@ const data = await response.json();
         <div class="d-grid gap-2  d-md-block text-end ">
           <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="modalJenisSplice()" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
         </div>
-        
         <ModalJenis @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :nama="namaEdit" :panjang="panjangEdit" :tebal="tebalEdit"  :lebar="lebarEdit"  ></ModalJenis>
 
       </div>    
@@ -496,11 +520,15 @@ const data = await response.json();
               <td @click="munculTableStok(jenis.id)">{{ jenis.stok }}</td>
               <!-- SAYA BUAT SEPERTI INI SEBAB KALAU TR NYA YANG DI BERI FUNGSI MUNCUL TABLE TOMBOL EDIT TIDAK BISA DI AKSES  -->
               <td><button type="button" class="btn btn-info" @click="editJenis(i)" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca" >Edit</button></td>
-              <td><button type="button" class="btn btn-danger">Delete</button></td>
-            </tr>    
+              <td><button type="button" class="btn btn-danger" @click="ambilId(jenis.id)" data-bs-toggle="modal" data-bs-target="#modalDelete">Delete</button></td>
+
+            </tr>  
           </tbody>
+
         </table>
         </div>
+        
+        
         <div class="col-sm-6 mt-5 "  v-if="stokTampil">
           <div class="row">
             <div class="col-6">
@@ -513,7 +541,6 @@ const data = await response.json();
                 <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
                 <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
               </div> 
-                
                   <ModalStok @inputStok ="inputStok"></ModalStok>
                     </div>
                 </div>    
@@ -579,7 +606,6 @@ const data = await response.json();
 
         <ModalStokEdit></ModalStokEdit>
 
-
         <div class="row">
             <div class="col-4">
                 <nav aria-label="d-grid gap-2 d-md-block">
@@ -613,8 +639,26 @@ const data = await response.json();
             </div>
         </div>    
 
-        <!-- MODAL EDIT JENIS KACA  -->
+        <!-- MODAL DELETE JENIS KACA  -->
+          <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDelete" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="alert alert-danger modal-header text-center">
+                <h5 class="alert-heading"><legend> Apa Anda yakin menghapus data kaca?</legend></h5>
+              </div>
+              <div class="modal-body">
+                <div class="text-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button"  class="btn btn-primary"  data-bs-dismiss="modal" @click="deleteJenis()" >Yes</button>
 
+                </div>
+              </div>
+              <div class="modal-footer">
+                
+              </div>
+            </div>
+          </div>
+        </div>
 
     </div>
 
