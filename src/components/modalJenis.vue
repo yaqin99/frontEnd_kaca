@@ -47,9 +47,9 @@
   
   const props = defineProps({
     nama: String,
-    panjang: Number,
-    tebal:Number,
-    lebar:Number,
+    panjang: String,
+    tebal:String,
+    lebar:String,
     isEdit:Boolean,
   });
 

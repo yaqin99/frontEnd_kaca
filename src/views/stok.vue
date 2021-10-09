@@ -6,7 +6,7 @@ import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import ModalJenis from '../components/modalJenis.vue';
 import ModalStok from '../components/modalStok.vue'
-
+import * as alertify from 'alertify.js';
 
 
 type stokType = {
@@ -31,12 +31,13 @@ const editModal = reactive<stokType[]>([])
 
 const stokPage = ref([1])
 const index = ref()
+const dipilih = ref()
 const munculTableStok = async (i:number) => {
     id.value = i ; 
     idnya.value = i;
     stokTampil.value = true ; 
     id_jenis_kaca.value = i;
-    const dipilih = true ; 
+     dipilih.value = true ; 
     const ambilArr = await fetch('http://localhost:8181/stok/pagingHistory/' + id.value);
     const result = await ambilArr.json();
     const arrLength = await result.length;
@@ -189,11 +190,16 @@ const updateJenis = async (sub:any) => {
             }
   isEdit.value = false ;
 };
-
 const idDelete = ref() ; 
-const ambilId = (id:number) => {
-idDelete.value = id ; 
-};
+const isDelete = ref()
+const alert = (id:number) => {
+  idDelete.value = id ;
+alertify.confirm( 'Confirm Message', function(){ deleteJenis() }
+                , function(){ alertify.error('Cancel')});
+
+
+}
+
 const deleteJenis = async () => {
       const hapusStok = await Api.deleteResource('/jenis/' + idDelete.value , 'DELETE');
       const hapus = await Api.deleteResource('/jenis/'+ idDelete.value , 'DELETE');
@@ -214,6 +220,9 @@ const deleteJenis = async () => {
             }
 };
 
+if (isDelete.value == true ) {
+deleteJenis()
+}
 
 const inputStok = async (sam:any)=> {
   try {
@@ -293,7 +302,8 @@ const dataJenis = reactive<jenisType[]>([])
     const indexStok = ref()
     const terpilih = ref()
 const halamanStokAktif = async (i:number) => {
-         terpilih.value = true ; 
+        indexStok.value = i ;
+        terpilih.value = true ; 
         const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + i ;
         const response = await fetch(path);
             const data = await response.json();
@@ -450,6 +460,10 @@ const halamanStokAktif = async (i:number) => {
                   }
                 }
 
+
+
+
+
 onMounted(async() =>{
 const ambilArr = await fetch('http://localhost:8181/jenis/totalJenis');
 const result = await ambilArr.json();
@@ -483,7 +497,6 @@ const data = await response.json();
 
 <template>
   <div class="container"> 
-     <ModalDelete nama="Yaqin"></ModalDelete>
 
     <div class="row  mt-5">
       <div class="col-sm-6">
@@ -520,7 +533,7 @@ const data = await response.json();
               <td @click="munculTableStok(jenis.id)">{{ jenis.stok }}</td>
               <!-- SAYA BUAT SEPERTI INI SEBAB KALAU TR NYA YANG DI BERI FUNGSI MUNCUL TABLE TOMBOL EDIT TIDAK BISA DI AKSES  -->
               <td><button type="button" class="btn btn-info" @click="editJenis(i)" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca" >Edit</button></td>
-              <td><button type="button" class="btn btn-danger" @click="ambilId(jenis.id)" data-bs-toggle="modal" data-bs-target="#modalDelete">Delete</button></td>
+              <td><button type="button" class="btn btn-danger" @click="alert(jenis.id)">Delete</button></td>
 
             </tr>  
           </tbody>
@@ -560,7 +573,7 @@ const data = await response.json();
                             <td>{{'Rp.' + stk.harga_beli}}</td>
                             <td>{{'Rp.' + stk.harga_jual}}</td>
                             <td>{{stk.stok}}</td>  
-                            <td><button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit" @click="edit()">Edit</button></td>
+                            <td><button type="button" class="btn btn-warning"  @click="alert()">Edit</button></td>
                         </tr>                      
                     </tbody>
                 </table>
@@ -604,7 +617,6 @@ const data = await response.json();
 
         <!-- MODAL EDIT  -->
 
-        <ModalStokEdit></ModalStokEdit>
 
         <div class="row">
             <div class="col-4">
@@ -640,7 +652,7 @@ const data = await response.json();
         </div>    
 
         <!-- MODAL DELETE JENIS KACA  -->
-          <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDelete" aria-hidden="true">
+          <!-- <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDelete" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="alert alert-danger modal-header text-center">
@@ -658,7 +670,7 @@ const data = await response.json();
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
     </div>
 
