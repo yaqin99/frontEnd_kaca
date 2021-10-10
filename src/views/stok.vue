@@ -7,9 +7,11 @@ import * as yup from 'yup';
 import ModalJenis from '../components/modalJenis.vue';
 import ModalStok from '../components/modalStok.vue'
 import * as alertify from 'alertify.js';
+import { array } from 'yup/lib/locale';
 
 
 type stokType = {
+    id:number ; 
     id_jenis_kaca:number,
     tanggal:string , 
     stok:number,
@@ -32,9 +34,12 @@ const editModal = reactive<stokType[]>([])
 const stokPage = ref([1])
 const index = ref()
 const dipilih = ref()
+const indexStok = ref(1)
+
 const munculTableStok = async (i:number) => {
     id.value = i ; 
     idnya.value = i;
+    indexStok.value = 1 ;
     stokTampil.value = true ; 
     id_jenis_kaca.value = i;
      dipilih.value = true ; 
@@ -51,6 +56,7 @@ const munculTableStok = async (i:number) => {
           if(data.length > 0 ){
               data.forEach((d: any) => {
                 dataStok.push({
+                  id:d.id,
                   id_jenis_kaca:d.id_jenis_kaca,
                   tanggal:d.tanggal ,
                   stok:d.stok, 
@@ -59,7 +65,6 @@ const munculTableStok = async (i:number) => {
                 })
               });
             }
-      console.log(dataStok)
 };
 
 
@@ -75,10 +80,10 @@ const jumlahData = ref();
 
 const coba = ref([1])
 
-const namaEdit = ref('');
-const panjangEdit = ref('');
-const lebarEdit = ref('');
-const tebalEdit = ref('');
+const namaEdit = ref();
+const panjangEdit = ref();
+const lebarEdit = ref();
+const tebalEdit = ref();
 const idEdit = ref(1);
 
 const isEdit = ref(false); 
@@ -124,8 +129,16 @@ const tableStokHide = () => {
 // };
   
 const idStok = ref()
+const hargaBeliEdit = ref() ; 
+const hargaJualEdit = ref() ; 
+const tanggalEdit = ref('') ; 
+const jumlahEdit = ref() ; 
 const tambahStok = ()=> {
   idStok.value = id.value;
+  hargaBeliEdit.value = '' ; 
+  hargaJualEdit.value = '' ; 
+  tanggalEdit.value = '' ; 
+  jumlahEdit.value = '' ;
 };
 
 
@@ -166,7 +179,6 @@ const inputJenis = async (el:any) => {
   }
 }; 
 const updateJenis = async (sub:any) => {
-  console.log('update Called')
   namaEdit.value = sub.nama ; 
   panjangEdit.value = sub.panjang ; 
   lebarEdit.value = sub.lebar ; 
@@ -201,7 +213,7 @@ alertify.confirm( 'Confirm Message', function(){ deleteJenis() }
 }
 
 const deleteJenis = async () => {
-      const hapusStok = await Api.deleteResource('/jenis/' + idDelete.value , 'DELETE');
+      const hapusStok = await Api.deleteResource('/stok/' + idDelete.value , 'DELETE');
       const hapus = await Api.deleteResource('/jenis/'+ idDelete.value , 'DELETE');
       dataJenis.splice(0,dataJenis.length)
       const takeAgain = await fetch('http://localhost:8181/jenis/listjenis');
@@ -218,15 +230,20 @@ const deleteJenis = async () => {
                 })
               });
             }
+      dataStok.splice(0,dataStok.length)
 };
 
-if (isDelete.value == true ) {
-deleteJenis()
-}
+
+
+// const date = ref() ; 
+// const sellPrice = ref() ; 
+// const buyPrice = ref() ; 
+// const totalStok = ref() ; 
 
 const inputStok = async (sam:any)=> {
   try {
-      const data = await Api.postResource('/stok',{id_jenis_kaca:id_jenis_kaca.value , tanggal:sam.tanggal , stok:sam.stok , harga_beli:sam.harga_beli , harga_jual:sam.harga_jual},'POST')
+
+      const data = await Api.postResource('/stok',{id_jenis_kaca:id_jenis_kaca.value , tanggal:sam.tanggalEdit , stok:sam.stokEdit , harga_beli:sam.hargaBeliEdit , harga_jual:sam.hargaJualEdit},'POST')
       dataStok.splice(0,dataStok.length);
       const response = await fetch('http://localhost:8181/stok/history/' + id.value);
       const ambil = await response.json();
@@ -234,6 +251,7 @@ const inputStok = async (sam:any)=> {
           if(ambil.length > 0 ){
               ambil.forEach((d: any) => {
                 dataStok.push({
+                  id:d.id ,
                   id_jenis_kaca:d.id_jenis_kaca,
                   tanggal:d.tanggal, 
                   stok:d.stok,
@@ -242,10 +260,10 @@ const inputStok = async (sam:any)=> {
                 })
               });
             }
-
-          // stokKaca.tanggal = '' ; 
-          // stokKaca.stok = '' ; 
-          // stokKaca.harga = '' ; 
+      hargaBeliEdit.value = '' ; 
+      hargaJualEdit.value = '' ; 
+      tanggalEdit.value = '' ; 
+      jumlahEdit.value = '' ;
 
       const res = await fetch('http://localhost:8181/jenis/listjenis');
       const sample = await res.json();
@@ -268,6 +286,64 @@ const inputStok = async (sam:any)=> {
       console.log(err)
   }
 };
+
+
+
+const idStokEdit = ref() ; 
+const munculModalEditStok = async (i:number) => {
+    const data = dataStok[i];
+    // idStokEdit.value = data.
+    idStokEdit.value = data.id ; 
+    const convert = data.tanggal.split("")  
+    const dateValid =convert[0] + convert[1] + convert[2] + convert[3] +  '-' + convert[5] + convert[6] + '-' + convert[8] + convert [9] 
+    hargaBeliEdit.value = data.harga_beli ; 
+    hargaJualEdit.value = data.harga_jual ; 
+    tanggalEdit.value = dateValid ; 
+    jumlahEdit.value = data.stok ; 
+    console.log(dateValid)
+    // const hapus = await Api.putResource('/'+id , {} , 'PUT')
+};
+
+const stokTanggal = ref() ; 
+const stokJual = ref() ; 
+const stokBeli = ref() ; 
+const stokJumlah = ref() ; 
+const idEditStok = ref() ; 
+
+const editStok = async (data:any) => {
+  idEditStok.value = data.id ; 
+  stokTanggal.value = data.tanggalEdit ; 
+  stokJual.value = data.hargaJualEdit ; 
+  stokBeli.value = data.hargaBeliEdit ; 
+  stokJumlah.value = data.stokEdit ; 
+  console.log('ini yang lo cari')
+  // console.log({
+  //   stokTanggal:stokTanggal.value , 
+  //   stokJual:stokJual.value , 
+  //   stokBeli:stokBeli.value , 
+  //   stokJumlah:stokJumlah.value , 
+  // })
+  const path = '/stok/' + idEditStok.value ; 
+  console.log(path)
+const response  = await Api.putResource(path , {id_jenis_kaca:id_jenis_kaca.value , tanggal:stokTanggal.value, stok:stokJumlah.value  , harga_beli : stokBeli.value, harga_jual:stokJual.value} , 'PUT');
+dataStok.splice(0,dataStok.length);
+const sample = await fetch('http://localhost:8181/stok/history/' + id.value);
+      const ambil = await sample.json();
+          dataStok.splice(0,dataStok.length)
+          if(ambil.length > 0 ){
+              ambil.forEach((d: any) => {
+                dataStok.push({
+                  id:d.id ,
+                  id_jenis_kaca:d.id_jenis_kaca,
+                  tanggal:d.tanggal, 
+                  stok:d.stok,
+                  harga_beli:d.harga_beli,
+                  harga_jual:d.harga_jual,
+                })
+              });
+            }
+};
+
 
 type jenisType = {
     id:number,
@@ -299,18 +375,18 @@ const dataJenis = reactive<jenisType[]>([])
 
 
     const indexnya = ref()
-    const indexStok = ref()
     const terpilih = ref()
 const halamanStokAktif = async (i:number) => {
         indexStok.value = i ;
         terpilih.value = true ; 
-        const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + i ;
+        const path = 'http://localhost:8181/stok/history/'+idnya.value+'?page=' + indexStok.value ;
         const response = await fetch(path);
             const data = await response.json();
             dataStok.splice(0,dataStok.length);
             if(data.length > 0 ){
                 data.forEach((d:any) => {
                     dataStok.push({
+                    id:d.id ,
                     id_jenis_kaca:d.id_jenis_kaca,
                     tanggal:d.tanggal ,
                     stok:d.stok, 
@@ -330,6 +406,7 @@ const halamanStokAktif = async (i:number) => {
                 if(data.length > 0 ){
                     data.forEach((d:any) => {
                       dataStok.push({
+                        id:d.id ,
                       id_jenis_kaca:d.id_jenis_kaca,
                       tanggal:d.tanggal ,
                       stok:d.stok, 
@@ -348,6 +425,7 @@ const halamanStokAktif = async (i:number) => {
                 if(data.length > 0 ){
                     data.forEach((d:any) => {
                       dataStok.push({
+                        id:d.id ,
                       id_jenis_kaca:d.id_jenis_kaca,
                       tanggal:d.tanggal ,
                       stok:d.stok, 
@@ -554,7 +632,7 @@ const data = await response.json();
                 <button type="button" class="btn btn-primary" @click="tambahStok()"  data-bs-toggle="modal" data-bs-target="#tambahstok" ><i class="bi bi-plus-circle"></i></button>
                 <button type="button" class="btn btn-secondary" @click="tableStokHide()" ><i class="bi bi-arrow-counterclockwise"></i></button>
               </div> 
-                  <ModalStok @inputStok ="inputStok"></ModalStok>
+                  <ModalStok @inputStok ="inputStok" @editStok="editStok" :id="idStokEdit"  :hargaBeliEdit="hargaBeliEdit" :hargaJualEdit="hargaJualEdit" :tanggalEdit="tanggalEdit" :stokEdit="jumlahEdit"></ModalStok>
                     </div>
                 </div>    
                 <table class="table table-bordered text-center" >
@@ -568,12 +646,12 @@ const data = await response.json();
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(stk) in dataStok" :key="stk.id">
+                        <tr v-for="(stk , i) in dataStok" :key="stk.id">
                             <td>{{stk.tanggal}}</td>
                             <td>{{'Rp.' + stk.harga_beli}}</td>
                             <td>{{'Rp.' + stk.harga_jual}}</td>
                             <td>{{stk.stok}}</td>  
-                            <td><button type="button" class="btn btn-warning"  @click="alert()">Edit</button></td>
+                            <td><button type="button" class="btn btn-warning" @click="munculModalEditStok(i)" data-bs-toggle="modal" data-bs-target="#tambahstok"  >Edit</button></td>
                         </tr>                      
                     </tbody>
                 </table>
