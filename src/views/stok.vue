@@ -300,7 +300,7 @@ const munculModalEditStok = async (i:number) => {
     hargaJualEdit.value = data.harga_jual ; 
     tanggalEdit.value = dateValid ; 
     jumlahEdit.value = data.stok ; 
-    console.log(dateValid)
+    
     // const hapus = await Api.putResource('/'+id , {} , 'PUT')
 };
 
@@ -586,7 +586,7 @@ const data = await response.json();
         <div class="d-grid gap-2  d-md-block text-end ">
           <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="modalJenisSplice()" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
         </div>
-        <ModalJenis @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :nama="namaEdit" :panjang="panjangEdit" :tebal="tebalEdit"  :lebar="lebarEdit"  ></ModalJenis>
+        <ModalJenis @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :namaEdit="namaEdit" :panjangEdit="panjangEdit" :tebalEdit="tebalEdit"  :lebarEdit="lebarEdit"  ></ModalJenis>
 
       </div>    
     </div>
