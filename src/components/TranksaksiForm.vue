@@ -7,30 +7,29 @@
           <option disabled value="">Pilih Jenis Kaca</option>
           <option v-for="jenis in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca">{{ jenis.nama }}</option>
         </select>
-        <h1>{{Pilihan}}</h1>
       </div>
     </div>
     <div class="col-12 row mt-3">
       <label for="ukuran" class="col-sm-3 col-form-label fw-bold">Ukuran</label>
       <div class="col-sm-3">
         <input type="text" class="form-control text-center" placeholder="Panjang" v-model="panjang">
-        <span style="font-size: 14px;">{{ panjang }}</span>
+        <span style="font-size: 14px;"></span>
       </div>
       <div class="col-sm-3 offset-sm-1">
         <input type="text" class="form-control text-center" placeholder="Lebar" v-model="lebar">
-        <span style="font-size: 14px;">{{ lebar }}hgh</span>
+        <span style="font-size: 14px;"></span>
       </div>
     </div>
     <div class="col-12 row mt-3">
       <label for="Jumlah" class="col-sm-3 col-form-label fw-bold">JUMLAH</label>
       <div class="col-sm-2">
-        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah">
-        <h1>{{ jumlah }}</h1>
+        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah" @change="coba()" >
+        <h1></h1>
       </div>
       <div class="col-sm-4 offset-sm-1 ">
         <div class="input-group sm-2">
           <span class="input-group-text" id="harga"><i class="bi bi-cash-coin"></i></span>
-          <input type="text"  class="form-control" placeholder="Rp. 0" aria-label="Username" aria-describedby="basic-addon1">
+          <input type="text"  class="form-control" placeholder="Rp. 0" v-model="getHarga" aria-label="Username" aria-describedby="basic-addon1">
         </div>
       </div>
       <div  class="col-sm-2 d-flex flex-column">
@@ -53,7 +52,7 @@
         <td>{{i+1}}</td>
         <td>{{kaca.nama}}</td>
         <td>{{kaca.panjang}} x {{kaca.lebar}}</td>
-        <td>{{ kaca.jumlah}}</td>
+        <td>{{kaca.jumlah}}</td>
         <td>{{kaca.harga}}</td>
       </tr>
     </tbody>
@@ -61,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, onMounted, ref } from 'vue';
+  import { reactive, onMounted, ref, computed } from 'vue';
   // const props = defineProps({
   //   Pilihan: Number,
   //   panjang: Number,
@@ -110,10 +109,22 @@
   const panjang = ref();
   const lebar = ref();
   const jumlah = ref();
-
+  const harga = ref();
+  const taklem = harga.value * jumlah.value;
+  const getHarga = computed(()=>{
+    return taklem;
+  });
+  const coba = async () =>{
+    const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
+    const data = await response.json();
+    harga.value = data.harga;
+    console.log(harga.value)
+  }
+  
   const masukkan = async () => {
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
     const data = await response.json();
+    console.log(data);
     const ambil = await fetch('http://localhost:8181/jenis/listjenis');
     const dapat = await ambil.json();
     let nama = '';
