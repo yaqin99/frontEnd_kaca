@@ -6,9 +6,9 @@ import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import ModalJenis from '../components/modalJenis.vue';
 import ModalStok from '../components/modalStok.vue'
-import * as alertify from 'alertify.js';
+import * as alertify from 'alertifyjs';
 import { array } from 'yup/lib/locale';
-
+declare const bootstrap: any;
 
 type stokType = {
     id:number ; 
@@ -90,17 +90,24 @@ const isEdit = ref(false);
 
 
 const editJenis = async (i:number) => {
-  isEdit.value = true ; 
   const data = dataJenis[i]
-  
   idEdit.value = data.id ; 
   namaEdit.value = data.nama ; 
   panjangEdit.value = data.panjang ; 
   lebarEdit.value = data.lebar ; 
-  tebalEdit.value = data.tebal ; 
-          
-          
-              
+  tebalEdit.value = data.tebal ;
+
+  isEdit.value = true;
+  setTimeout(() => {
+    const elm = document.getElementById('TambahJenisKaca');
+    const myModal = new bootstrap.Modal(elm);
+    myModal.show();
+    if (elm) {
+      elm.addEventListener('hidden.bs.modal', () => {
+        isEdit.value = false;
+      })
+    }
+  }, 100); 
 };
 
 
@@ -206,10 +213,7 @@ const idDelete = ref() ;
 const isDelete = ref()
 const alert = (id:number) => {
   idDelete.value = id ;
-alertify.confirm( 'Confirm Message', function(){ deleteJenis() }
-                , function(){ alertify.error('Cancel')});
-
-
+  alertify.confirm('Hapus Jenis Kaca', 'Apakah Anda yakin menghapus data ini?', function(){ deleteJenis() }, function(){});
 }
 
 const deleteJenis = async () => {
@@ -586,7 +590,7 @@ const data = await response.json();
         <div class="d-grid gap-2  d-md-block text-end ">
           <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="modalJenisSplice()" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
         </div>
-        <ModalJenis @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :namaEdit="namaEdit" :panjangEdit="panjangEdit" :tebalEdit="tebalEdit"  :lebarEdit="lebarEdit"  ></ModalJenis>
+        <ModalJenis v-if="isEdit" @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :namaEdit="namaEdit" :panjangEdit="panjangEdit" :tebalEdit="tebalEdit"  :lebarEdit="lebarEdit" ></ModalJenis>
 
       </div>    
     </div>
@@ -610,7 +614,7 @@ const data = await response.json();
               <td @click="munculTableStok(jenis.id)">{{ jenis.panjang}} x {{ jenis.lebar}} x {{ jenis.tebal}}</td>
               <td @click="munculTableStok(jenis.id)">{{ jenis.stok }}</td>
               <!-- SAYA BUAT SEPERTI INI SEBAB KALAU TR NYA YANG DI BERI FUNGSI MUNCUL TABLE TOMBOL EDIT TIDAK BISA DI AKSES  -->
-              <td><button type="button" class="btn btn-info" @click="editJenis(i)" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca" >Edit</button></td>
+              <td><button type="button" class="btn btn-info" @click="editJenis(i)">Edit</button></td>
               <td><button type="button" class="btn btn-danger" @click="alert(jenis.id)">Delete</button></td>
 
             </tr>  
@@ -680,7 +684,7 @@ const data = await response.json();
                                     <span aria-hidden="true">Next</span>
                                 </a>
                                 </li>
-                                <li class="page-item" v-if="indexstok !== stokPage.length"  >
+                                <li class="page-item" v-if="indexStok !== stokPage.length"  >
                                 <a class="page-link" href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>

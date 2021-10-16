@@ -39,11 +39,10 @@
 </template>
 <script setup lang="ts">
 
-  import { useField, useForm } from 'vee-validate'
+  import { watch } from '@vue/runtime-core';
+import { useField, useForm } from 'vee-validate'
   import * as yup from 'yup'
   import { setLocale } from 'yup'
-  
-  
   
   const props = defineProps({
     namaEdit: String,
@@ -73,20 +72,20 @@
     panjang: yup.number().typeError("Bukan Angka").required("Panjang masih kosong").min(1,"Panjang terlalu kecil").max(200,"Angka Melampaui batas"),
     lebar: yup.number().typeError("Bukan Angka").required("Lebar masih kosong").min(1,"Lebar terlalu kecil").max(200,"Angka Melampaui batas"),
     tebal:yup.number().typeError("Bukan Angka").required("Tebal masih kosong").min(1,"Tebal terlalu kecil").max(200,"Angka Melampaui batas")
-
   });
   
   const {setValues,meta, errors} = useForm({
     validationSchema: schema
   })
+  setValues({ nama: props.namaEdit, panjang: props.panjangEdit, lebar: props.lebarEdit, tebal: props.tebalEdit });
 
   const { value: panjang , meta:metaPanjang} = useField('panjang');
   const { value: lebar , meta:metaLebar} = useField('lebar');
   const { value:nama , meta:metaNama} = useField('nama');
   const { value:tebal , meta:metaTebal} = useField('tebal');
 
-  panjang.value = props.panjangEdit ; 
-  lebar.value = props.lebarEdit ; 
-  nama.value = props.namaEdit ; 
-  tebal.value = props.tebalEdit ; 
+  // panjang.value = props.panjangEdit ; 
+  // lebar.value = props.lebarEdit ; 
+  // nama.value = props.namaEdit ; 
+  // tebal.value = props.tebalEdit ; 
 </script>

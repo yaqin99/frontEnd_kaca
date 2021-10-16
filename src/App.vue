@@ -19,4 +19,8 @@ import { onMounted } from "vue";
   
 </template>
 
+<style>
+@import 'alertifyjs/build/css/alertify.min.css';
+@import 'alertifyjs/build/css/themes/default.min.css';
 
+</style>
