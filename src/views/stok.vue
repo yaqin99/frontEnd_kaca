@@ -81,21 +81,25 @@ const jumlahData = ref();
 const coba = ref([1])
 
 const namaEdit = ref();
-const panjangEdit = ref();
-const lebarEdit = ref();
-const tebalEdit = ref();
+const panjangEdit = ref(0);
+const lebarEdit = ref(0);
+const tebalEdit = ref(0);
 const idEdit = ref(1);
 
 const isEdit = ref(false); 
 
 
 const editJenis = async (i:number) => {
-  const data = dataJenis[i]
-  idEdit.value = data.id ; 
-  namaEdit.value = data.nama ; 
-  panjangEdit.value = data.panjang ; 
-  lebarEdit.value = data.lebar ; 
-  tebalEdit.value = data.tebal ;
+  if (i != -1) {
+    const data = dataJenis[i]
+    idEdit.value = data.id ; 
+    namaEdit.value = data.nama ; 
+    panjangEdit.value = data.panjang ; 
+    lebarEdit.value = data.lebar ; 
+    tebalEdit.value = data.tebal ;
+  } else {
+    modalJenisSplice();
+  }
 
   isEdit.value = true;
   setTimeout(() => {
@@ -187,9 +191,9 @@ const inputJenis = async (el:any) => {
 }; 
 const updateJenis = async (sub:any) => {
   namaEdit.value = sub.nama ; 
-  panjangEdit.value = sub.panjang ; 
-  lebarEdit.value = sub.lebar ; 
-  tebalEdit.value = sub.tebal ; 
+  panjangEdit.value = parseInt(sub.panjang) ; 
+  lebarEdit.value = parseInt(sub.lebar) ; 
+  tebalEdit.value = parseInt(sub.tebal) ; 
   const response = await Api.putResource('/jenis/'+idEdit.value,{nama:namaEdit.value , panjang:panjangEdit.value , lebar:lebarEdit.value , tebal:tebalEdit.value} , 'PUT')
   dataJenis.splice(0,dataJenis.length);
   const takeAgain = await fetch('http://localhost:8181/jenis/listjenis');
@@ -365,12 +369,13 @@ const modalJenisSplice = () => {
   newPanjang.value = '' ; 
   newLebar.value = '' ; 
   newNama.value = '' ; 
-  newTebal.value = '' ; 
-  isEdit.value = false ; 
+  newTebal.value = '' ;
+  isEdit.value = true; 
+  idEdit.value = 0;
   namaEdit.value = '' ; 
-  panjangEdit.value = '' ; 
-  lebarEdit.value = '' ; 
-  tebalEdit.value = '' ; 
+  panjangEdit.value = 0 ; 
+  lebarEdit.value = 0 ; 
+  tebalEdit.value = 0 ; 
 }
 
 
@@ -588,9 +593,9 @@ const data = await response.json();
       </div>
       <div class="col-sm-6 ">
         <div class="d-grid gap-2  d-md-block text-end ">
-          <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="modalJenisSplice()" data-bs-toggle="modal" data-bs-target="#TambahJenisKaca">Jenis kaca</button>    
+          <button class="btn btn-primary col-4 bi bi-plus-circle" type="button" @click="editJenis(-1)">Jenis kaca</button>    
         </div>
-        <ModalJenis v-if="isEdit" @inputJenis="inputJenis" :isEdit='isEdit' @updateJenis="updateJenis" :namaEdit="namaEdit" :panjangEdit="panjangEdit" :tebalEdit="tebalEdit"  :lebarEdit="lebarEdit" ></ModalJenis>
+        <ModalJenis v-if="isEdit" @inputJenis="inputJenis" :id-edit="idEdit" :isEdit='isEdit' @updateJenis="updateJenis" :namaEdit="namaEdit" :panjangEdit="panjangEdit" :tebalEdit="tebalEdit"  :lebarEdit="lebarEdit" ></ModalJenis>
 
       </div>    
     </div>

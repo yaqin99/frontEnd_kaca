@@ -31,7 +31,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button"  class="btn btn-primary" :disabled="!meta.valid"   @click="  $emit( isEdit === true ?  'updateJenis' : 'inputJenis', { nama, panjang ,lebar , tebal}) " data-bs-dismiss="modal" >Simpan</button>
+                <button type="button"  class="btn btn-primary" :disabled="!meta.valid"   @click="  $emit( idEdit > 0 ?  'updateJenis' : 'inputJenis', { nama, panjang ,lebar , tebal}) " data-bs-dismiss="modal" >Simpan</button>
               </div>
             </div>
           </div>
@@ -45,6 +45,9 @@ import { useField, useForm } from 'vee-validate'
   import { setLocale } from 'yup'
   
   const props = defineProps({
+    idEdit: {
+      type: Number, required: true
+    },
     namaEdit: String,
     panjangEdit: Number,
     tebalEdit:Number,
