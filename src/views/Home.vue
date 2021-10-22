@@ -262,7 +262,7 @@
                         </a>
                         </li>
 
-                        <!-- <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , index) in coba " :key="index" :value="index+1"  @click="halamanAktif(index + 1)"  class="page-item"><a class="page-link" href="#">{{ index + 1 }}</a></li> -->
+                        <li :class="terpilih == true ? 'border border-primarys' : 'gakAda'" v-for="(page , index) in coba " :key="index" :value="index+1"  @click="halamanAktif(index + 1)"  class="page-item"><a class="page-link" href="#">{{ index + 1 }}</a></li>
                        
                         <li class="page-item"  v-if="indexnya !== coba.length" @click="halamanNaik()">
                         <a class="page-link"  aria-label="Next" >
