@@ -5,7 +5,7 @@
       <div class="col-9">
         <select class="col-sm-8 form-select" v-model="Pilihan">
           <option disabled value="">Pilih Jenis Kaca</option>
-          <option v-for="jenis in dataJenis" :key="jenis.id" :value="jenis.id_jenis_kaca">{{ jenis.nama }}</option>
+          <option v-for="jenis in dataJenis" :key="jenis.id_jenis_kaca" :value="jenis.id_jenis_kaca">{{ jenis.nama }}</option>
         </select>
       </div>
     </div>
@@ -67,6 +67,7 @@
   //   lebar: Number,
   //   jumlah: Number ,
   // });
+
   type jenisType = {
     id_jenis_kaca : number,
     nama : string , 
@@ -74,7 +75,7 @@
     lebar : number , 
     tebal : number , 
   }
-  const emit = defineEmits(['OK']);
+  const emit = defineEmits(['sendTransaction']);
   const dataJenis = reactive<jenisType[]>([]);
   onMounted(async() =>{
     try {   
@@ -124,7 +125,6 @@
   const masukkan = async () => {
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
     const data = await response.json();
-    console.log(data);
     const ambil = await fetch('http://localhost:8181/jenis/listjenis');
     const dapat = await ambil.json();
     let nama = '';
@@ -136,6 +136,8 @@
     Tranksaksi.push({
       nama: String(nama), panjang: String(panjang.value), lebar: String(lebar.value), jumlah: String(jumlah.value), harga: data.harga*parseInt(jumlah.value)
     })
+
+    emit('sendTransaction' , {nama , panjang:panjang.value , lebar:lebar.value , jumlah:jumlah.value,harga:data.harga*parseInt(jumlah.value)})
     Pilihan.value = '';
     panjang.value = '1';
     lebar.value = '1';

@@ -16,12 +16,17 @@ const props = defineProps<{
 // const emit = defineEmits<{
 //   'update:modelValue': any
 // }>();
-const emit = defineEmits(['update:modelValue', 'search']);
+const emit = defineEmits(['update:modelValue', 'search' , 'ambilNama']);
 
 const label = ref('');
 const picked = ref(false);
 const current = ref(-1);
 
+function ambil(){
+
+  emit('ambilNama' , {nama:label.value})
+
+}
 const filteredList = computed(() => {
   if (picked.value) return [];
   if (label.value.length == 0) return [];
@@ -65,12 +70,13 @@ function selectOption(i: number) {
   emit('update:modelValue', item);
 }
 
+
+
 function done() {
   if ( ! picked.value) {
     emit('update:modelValue', label.value);
   }
 }
-
 </script>
 
 <template>
