@@ -100,9 +100,9 @@
   type transaksiBody = {
     id_jenis_kaca:number,
     nama : string,
-    panjang: string,
-    lebar: string,
-    jumlah: string,
+    panjang: number,
+    lebar: number,
+    jumlah: number,
     harga:number,  
   }
   const Transaksi = reactive<transaksiBody[]>([]);
@@ -136,7 +136,7 @@
     }
     
     Transaksi.push({
-      id_jenis_kaca:id_jenis_kaca.value, nama: String(nama), panjang: String(panjang.value), lebar: String(lebar.value), jumlah: String(jumlah.value), harga: data.harga*parseInt(jumlah.value)
+      id_jenis_kaca:id_jenis_kaca.value, nama: nama, panjang: panjang.value, lebar: lebar.value, jumlah: jumlah.value, harga: data.harga*parseInt(jumlah.value)
     })
     
     

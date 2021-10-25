@@ -17,28 +17,45 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {reactive, ref} from 'vue'
   import TranksaksiForm from '../components/TranksaksiForm.vue';
   import TranksaksiBio from '../components/TranksaksiBio.vue';
   import TranksaksiBayar from '../components/TranksaksiBayar.vue';
   import Api from '../services/api'
 
+  type transaksiBody = {
+    id_jenis_kaca:number,
+    nama : string,
+    panjang: number,
+    lebar: number,
+    jumlah: number,
+    harga:number,  
+  }
+  const transaksi = reactive<transaksiBody[]>([]);
   const panjang = ref() ; 
   const lebar = ref() ; 
   const jumlah = ref() ; 
   const harga = ref() ; 
   const id_jenis_kaca = ref() ; 
   const datanya = ref() ; 
-  const sendTransaction = (data:any) => {
-   const sample =  JSON.parse(JSON.stringify(data))
-    //  id_jenis_kaca.value = data.id_jenis_kaca , 
-    // panjang.value = data.panjang ; 
-    // lebar.value = data.lebar ; 
-    // jumlah.value = data.jumlah ; 
-    // harga.value = data.harga ;
-    
-    console.log(sample)
 
+  const sendTransaction = (data:any) => {
+    
+  const lastArr = data.Transaksi;
+   lastArr.forEach((b:any) => {
+     transaksi.push({
+       id_jenis_kaca:b.id_jenis_kaca , 
+       nama:b.nama , 
+       panjang:b.panjang , 
+       lebar:b.lebar , 
+       jumlah:b.jumlah , 
+       harga:b.harga , 
+     })
+     console.log(transaksi) 
+    
+     });
+  
+    
   }
 
   
@@ -59,8 +76,9 @@ import {ref} from 'vue'
       bayar: data.bayar , 
       kembali:data.kembali ,
       detil:[
+        
         {
-          id_jenis_kaca:id_jenis_kaca.value  , 
+          id_jenis_kaca:id_jenis_kaca.value , 
           panjang:panjang.value , 
           lebar:lebar.value , 
           biaya:harga.value , 
