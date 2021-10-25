@@ -6,8 +6,7 @@
       </div>
       <div class="col-sm-4 offset-sm-1">
         <form>
-          <div class="row">
-            
+          <div class="row">  
             <TranksaksiBayar @sendCustomers="sendCustomers"></TranksaksiBayar>
           </div>
         </form>           
@@ -17,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {reactive, ref} from 'vue'
   import TranksaksiForm from '../components/TranksaksiForm.vue';
   import TranksaksiBio from '../components/TranksaksiBio.vue';
   import TranksaksiBayar from '../components/TranksaksiBayar.vue';
@@ -28,17 +27,23 @@ import {ref} from 'vue'
   const jumlah = ref() ; 
   const harga = ref() ; 
   const id_jenis_kaca = ref() ; 
-  const datanya = ref() ; 
+  const datanya = ref() ;
+  type typeForm = {
+    id_jenis_kaca:number,
+    nama : string,
+    panjang: string,
+    lebar: string,
+    jumlah: string,
+    harga:number,  
+  }
+  const table = reactive<typeForm[]>([]);
   const sendTransaction = (data:any) => {
-   const sample =  JSON.parse(JSON.stringify(data))
-    //  id_jenis_kaca.value = data.id_jenis_kaca , 
-    // panjang.value = data.panjang ; 
-    // lebar.value = data.lebar ; 
-    // jumlah.value = data.jumlah ; 
-    // harga.value = data.harga ;
-    
-    console.log(sample)
-
+   const sample =  JSON.parse(JSON.stringify(data.Transaksi));
+   sample.forEach((d: { id_jenis_kaca: any; nama: any; panjang: any; lebar: any; jumlah: any; harga: any; })  => {
+     table.push({
+       id_jenis_kaca: d.id_jenis_kaca, nama: d.nama, panjang: d.panjang, lebar: d.lebar, jumlah: d.jumlah, harga: d.harga 
+     })
+   });
   }
 
   
@@ -58,14 +63,8 @@ import {ref} from 'vue'
       total:harga.value , 
       bayar: data.bayar , 
       kembali:data.kembali ,
-      detil:[
-        {
-          id_jenis_kaca:id_jenis_kaca.value  , 
-          panjang:panjang.value , 
-          lebar:lebar.value , 
-          biaya:harga.value , 
-        }
-      ]
+      
+      detil: table
     },'POST');
     
     // console.log({
