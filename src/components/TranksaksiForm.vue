@@ -48,12 +48,12 @@
       </tr>
     </thead>
     <tbody>
-    <tr v-for="(kaca, i) in Tranksaksi" :key="i" >
+    <tr v-for="(kaca, i) in Transaksi" :key="i" >
         <td>{{i+1}}</td>
         <td>{{kaca.nama}}</td>
         <td>{{kaca.panjang}} x {{kaca.lebar}}</td>
         <td>{{kaca.jumlah}}</td>
-        <td>{{kaca.harga}}</td>
+        <td>Rp.{{new Intl.NumberFormat().format(kaca.harga)}}</td>
       </tr>
     </tbody>
   </table>
@@ -81,7 +81,6 @@
     try {   
       const response = await fetch('http://localhost:8181/jenis/listjenis');
       const data = await response.json();
-      console.log(data[0].id);
       if(data.length > 0 ){
         data.forEach((d: any) => {
           dataJenis.push({ 
@@ -105,13 +104,14 @@
     jumlah: string,
     harga:number,  
   }
-  const Tranksaksi = reactive<transaksiBody[]>([]);
+  const Transaksi = reactive<transaksiBody[]>([]);
   const Pilihan = ref('');
   const panjang = ref();
   const lebar = ref();
   const jumlah = ref();
   const harga = ref();
   const taklem = harga.value * jumlah.value;
+  const id_jenis_kaca = ref() ;
   const getHarga = computed(()=>{
     return taklem;
   });
@@ -119,7 +119,6 @@
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
     const data = await response.json();
     harga.value = data.harga;
-    console.log(harga.value)
   }
   
   const masukkan = async () => {
@@ -131,18 +130,22 @@
     for (let i = 0; i < dataJenis.length; i++) {
       if(Pilihan.value == dapat[i].id){
         nama = dapat[i].nama;
+        id_jenis_kaca.value = dapat[i].id ; 
       }
     }
-    Tranksaksi.push({
+    
+    Transaksi.push({
       nama: String(nama), panjang: String(panjang.value), lebar: String(lebar.value), jumlah: String(jumlah.value), harga: data.harga*parseInt(jumlah.value)
     })
-
-    emit('sendTransaction' , {nama , panjang:panjang.value , lebar:lebar.value , jumlah:jumlah.value,harga:data.harga*parseInt(jumlah.value)})
+    
+    
+    // emit('sendTransaction' , {  id_jenis_kaca:id_jenis_kaca.value ,  nama , panjang:panjang.value , lebar:lebar.value , jumlah:jumlah.value,harga:data.harga*parseInt(jumlah.value)})
     Pilihan.value = '';
     panjang.value = '1';
     lebar.value = '1';
     jumlah.value= '1';
   }
+  
 </script>
 
 <style>

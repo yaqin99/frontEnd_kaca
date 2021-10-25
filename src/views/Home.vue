@@ -311,7 +311,7 @@
                             </div>
                             <div class="row align-items-center"  >
                                 <div class="col align-self-start" style="font-size: 11px;">
-                                Kaca {{index + 1}} ({{sub.panjang}} x {{sub.lebar}})
+                                Kaca {{i + 1}} ({{sub.panjang}} x {{sub.lebar}})
                                 </div>
                                 <div class="col align-self-end text-end" style="font-size: 11px;">
                                 {{ sub.tanggal}}
