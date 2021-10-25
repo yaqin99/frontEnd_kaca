@@ -6,8 +6,7 @@
       </div>
       <div class="col-sm-4 offset-sm-1">
         <form>
-          <div class="row">
-            
+          <div class="row">  
             <TranksaksiBayar @sendCustomers="sendCustomers"></TranksaksiBayar>
           </div>
         </form>           
@@ -56,7 +55,7 @@ import {reactive, ref} from 'vue'
      });
   
     
-  }
+
 
   
   var today = new Date();
