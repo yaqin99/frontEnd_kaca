@@ -28,12 +28,17 @@ import {ref} from 'vue'
   const jumlah = ref() ; 
   const harga = ref() ; 
   const id_jenis_kaca = ref() ; 
+  const datanya = ref() ; 
   const sendTransaction = (data:any) => {
-     id_jenis_kaca.value = data.id_jenis_kaca , 
-    panjang.value = data.panjang ; 
-    lebar.value = data.lebar ; 
-    jumlah.value = data.jumlah ; 
-    harga.value = data.harga ; 
+   const sample =  JSON.parse(JSON.stringify(data))
+    //  id_jenis_kaca.value = data.id_jenis_kaca , 
+    // panjang.value = data.panjang ; 
+    // lebar.value = data.lebar ; 
+    // jumlah.value = data.jumlah ; 
+    // harga.value = data.harga ;
+    
+    console.log(sample)
+
   }
 
   

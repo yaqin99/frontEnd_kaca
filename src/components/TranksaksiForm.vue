@@ -98,6 +98,7 @@
     }
   })
   type transaksiBody = {
+    id_jenis_kaca:number,
     nama : string,
     panjang: string,
     lebar: string,
@@ -135,11 +136,11 @@
     }
     
     Transaksi.push({
-      nama: String(nama), panjang: String(panjang.value), lebar: String(lebar.value), jumlah: String(jumlah.value), harga: data.harga*parseInt(jumlah.value)
+      id_jenis_kaca:id_jenis_kaca.value, nama: String(nama), panjang: String(panjang.value), lebar: String(lebar.value), jumlah: String(jumlah.value), harga: data.harga*parseInt(jumlah.value)
     })
     
     
-    // emit('sendTransaction' , {  id_jenis_kaca:id_jenis_kaca.value ,  nama , panjang:panjang.value , lebar:lebar.value , jumlah:jumlah.value,harga:data.harga*parseInt(jumlah.value)})
+    emit('sendTransaction' , {Transaksi})
     Pilihan.value = '';
     panjang.value = '1';
     lebar.value = '1';
