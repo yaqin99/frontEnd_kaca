@@ -31,6 +31,8 @@ import {reactive, ref} from 'vue'
     harga:number,  
   }
   const transaksi = reactive<transaksiBody[]>([]);
+  let transLoop = reactive<transaksiBody[]>([]);
+
   const panjang = ref() ; 
   const lebar = ref() ; 
   const jumlah = ref() ; 
@@ -41,31 +43,33 @@ import {reactive, ref} from 'vue'
   const sendTransaction = (data:any) => {
     
   const lastArr = data.Transaksi;
-   lastArr.forEach((b:any) => {
-     transaksi.push({
-       id_jenis_kaca:b.id_jenis_kaca , 
-       nama:b.nama , 
-       panjang:b.panjang , 
-       lebar:b.lebar , 
-       jumlah:b.jumlah , 
-       harga:b.harga , 
-     })
-     console.log(transaksi) 
-    
-     });
   
+      lastArr.forEach((a:any) => {
+        transaksi.push({
+          id_jenis_kaca:a.id_jenis_kaca , 
+           nama:a.nama , 
+           panjang:a.panjang , 
+           lebar:a.lebar , 
+           jumlah:a.jumlah , 
+           harga:a.harga , 
+         })
+        
+      });
+
+  console.log(transaksi)
+  }
+     
+  let today = new Date();
+  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  let dateTime = date+' '+time;
+
+
+
+  function sendCustomers (data:any) {
     
-
-
-  
-  var today = new Date();
-  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  var dateTime = date+' '+time;
-
-  const sendCustomers = async (data:any) => {
     
-    const response = await Api.postResource('/transaksi/tambah',{
+    const response = Api.postResource('/transaksi/tambah',{
       id_pembeli:data.id , 
       nama:data.nama , 
       hp:data.hp , 
@@ -93,5 +97,5 @@ import {reactive, ref} from 'vue'
     //   kembali:data.kembali , 
     // })
   }
-
+  
 </script>

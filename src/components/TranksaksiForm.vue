@@ -23,7 +23,7 @@
     <div class="col-12 row mt-3">
       <label for="Jumlah" class="col-sm-3 col-form-label fw-bold">JUMLAH</label>
       <div class="col-sm-2">
-        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah" @change="coba()" >
+        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah" @change="masukan()" >
         <h1></h1>
       </div>
       <div class="col-sm-4 offset-sm-1 ">
@@ -33,7 +33,7 @@
         </div>
       </div>
       <div  class="col-sm-2 d-flex flex-column">
-        <button type="button" class="bi bi-check-circle btn btn-primary" @click="masukkan()"></button>
+        <button type="button" class="bi bi-check-circle btn btn-primary" @click="sendTransaksi()" ></button>
       </div>
     </div>
   </form>
@@ -44,7 +44,8 @@
         <th class="col-sm-3">Kaca</th>
         <th class="col-sm-3">Ukuran</th>
         <th class="col-sm-2">Jumlah</th>
-        <th class="col-sm-10 ">Harga</th>
+        <th class="col-sm-10">Harga</th>
+        <th class="col-sm-1">Aksi</th>
       </tr>
     </thead>
     <tbody>
@@ -54,6 +55,7 @@
         <td>{{kaca.panjang}} x {{kaca.lebar}}</td>
         <td>{{kaca.jumlah}}</td>
         <td>Rp.{{new Intl.NumberFormat().format(kaca.harga)}}</td>
+        <td><button type="button" class="btn btn-danger" @click="hapusTransaksi(i)">Delete</button></td>
       </tr>
     </tbody>
   </table>
@@ -116,13 +118,16 @@
   const getHarga = computed(()=>{
     return taklem;
   });
-  const coba = async () =>{
-    const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
-    const data = await response.json();
-    harga.value = data.harga;
-  }
+  // const coba = async () =>{
+  //   const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
+  //   const data = await response.json();
+  //   harga.value = data.harga;
+  // }
+  const hapusTransaksi = (index:any) => {
+    Transaksi.splice(index,1)
+  };
   
-  const masukkan = async () => {
+  const masukan = async () => {
     const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
     const data = await response.json();
     const ambil = await fetch('http://localhost:8181/jenis/listjenis');
@@ -139,14 +144,16 @@
       id_jenis_kaca:id_jenis_kaca.value, nama: nama, panjang: panjang.value, lebar: lebar.value, jumlah: jumlah.value, harga: data.harga*parseInt(jumlah.value)
     })
     
-    
-    emit('sendTransaction' , {Transaksi})
+    console.log(Transaksi)
     Pilihan.value = '';
-    panjang.value = '1';
-    lebar.value = '1';
-    jumlah.value= '1';
+    panjang.value = '';
+    lebar.value = '';
+    jumlah.value= '';
   }
   
+  const sendTransaksi = () => {
+        emit('sendTransaction' , {Transaksi})
+  };
 </script>
 
 <style>
