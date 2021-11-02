@@ -51,10 +51,7 @@ import { useField, useForm } from 'vee-validate';
   const { value:stok , meta:metahStok} = useField('stok');
   const { value:tanggal , meta:metaTanggal} = useField('tanggal');
 
-  harga_beli.value = props.hargaBeliEdit ; 
-  harga_jual.value = props.hargaJualEdit ; 
-  stok.value = props.stokEdit ; 
-  tanggal.value = props.tanggalEdit ; 
+  setValues({harga_beli:props.hargaBeliEdit , harga_jual:props.hargaJualEdit , stok:props.stokEdit , tanggal:props.tanggalEdit})
 
 </script>
 <template>

@@ -81,10 +81,10 @@ import {reactive, ref} from 'vue'
       detil:[
         
         {
-          id_jenis_kaca:id_jenis_kaca.value , 
-          panjang:panjang.value , 
-          lebar:lebar.value , 
-          biaya:harga.value , 
+          id_jenis_kaca:transaksi[0].id_jenis_kaca , 
+          panjang:transaksi[0].panjang , 
+          lebar:transaksi[0].lebar , 
+          biaya:transaksi[0].lebar, 
         }
       ]
     },'POST');
