@@ -63,12 +63,9 @@
 
 <script setup lang="ts">
   import { reactive, onMounted, ref, computed } from 'vue';
-  // const props = defineProps({
-  //   Pilihan: Number,
-  //   panjang: Number,
-  //   lebar: Number,
-  //   jumlah: Number ,
-  // });
+  const props = defineProps({
+    Transaksi:Array,
+  });
 
   type jenisType = {
     id_jenis_kaca : number,
@@ -144,7 +141,7 @@
       id_jenis_kaca:id_jenis_kaca.value, nama: nama, panjang: panjang.value, lebar: lebar.value, jumlah: jumlah.value, harga: data.harga*parseInt(jumlah.value)
     })
     
-    console.log(Transaksi)
+    
     Pilihan.value = '';
     panjang.value = '';
     lebar.value = '';

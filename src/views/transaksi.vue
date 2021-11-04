@@ -7,7 +7,7 @@
       <div class="col-sm-4 offset-sm-1">
         <form>
           <div class="row">  
-            <TranksaksiBayar @sendCustomers="sendCustomers"></TranksaksiBayar>
+            <TranksaksiBayar @sendCustomers="sendCustomers"  :bayar="bayar" :kembali="kembali"></TranksaksiBayar>
           </div>
         </form>           
       </div>
@@ -30,16 +30,30 @@ import {reactive, ref} from 'vue'
     jumlah: number,
     harga:number,  
   }
+  type transLoopBody = {
+    id_jenis_kaca:number,
+    
+    panjang: number,
+    lebar: number,
+    
+    harga:number,  
+  }
+    
   const transaksi = reactive<transaksiBody[]>([]);
-  let transLoop = reactive<transaksiBody[]>([]);
-
+  let transLoop = reactive<transLoopBody[]>([]);
+  const bayar = ref() ; 
+  const kembali = ref() ; 
+  const nama = ref() ; 
+  const hp = ref() ; 
+  const alamat = ref() ;
+  const id = ref() ;
   const panjang = ref() ; 
   const lebar = ref() ; 
   const jumlah = ref() ; 
   const harga = ref() ; 
   const id_jenis_kaca = ref() ; 
   const datanya = ref() ; 
-
+  const transArr = ref();
   const sendTransaction = (data:any) => {
     
   const lastArr = data.Transaksi;
@@ -53,10 +67,17 @@ import {reactive, ref} from 'vue'
            jumlah:a.jumlah , 
            harga:a.harga , 
          })
-        
       });
+  id_jenis_kaca.value = transaksi[0].id_jenis_kaca ; 
+  panjang.value = transaksi[0].panjang ; 
+  lebar.value = transaksi[0].lebar ; 
+  harga.value = transaksi[0].harga ; 
+  
+   transArr.value = data.Transaksi; 
+  console.log(JSON.stringify(data.Transaksi));
 
-  console.log(transaksi)
+
+
   }
      
   let today = new Date();
@@ -67,7 +88,7 @@ import {reactive, ref} from 'vue'
 
 
   function sendCustomers (data:any) {
-    
+     
     
     const response = Api.postResource('/transaksi/tambah',{
       id_pembeli:data.id , 
@@ -78,24 +99,12 @@ import {reactive, ref} from 'vue'
       total:harga.value , 
       bayar: data.bayar , 
       kembali:data.kembali ,
-      detil:[
-        
-        {
-          id_jenis_kaca:transaksi[0].id_jenis_kaca , 
-          panjang:transaksi[0].panjang , 
-          lebar:transaksi[0].lebar , 
-          biaya:transaksi[0].lebar, 
-        }
-      ]
+      detil: transArr
     },'POST');
     
-    // console.log({
-    //   nama:data.nama , 
-    //   hp:data.hp , 
-    //   alamat:data.alamat , 
-    //   bayar:data.bayar , 
-    //   kembali:data.kembali , 
-    // })
+     bayar.value = '' ; 
+     kembali.value = '';
+    
   }
   
 </script>

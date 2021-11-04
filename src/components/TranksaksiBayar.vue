@@ -49,15 +49,15 @@
 
   import {ref} from 'vue';
   import AutoComplete from '../components/AutoComplete.vue';
-  // const props = defineProps({
-  //   bayar: Number,
-  //   kembali: Number
-  // })
+  const props = defineProps({
+    bayar: String,
+    kembali: String , 
+    
+  })
 
 
   let options = ref([]);
-  const bayar = ref() ; 
-  const kembali = ref() ; 
+  
   const emit = defineEmits(['sendCustomers'])
   const namaPembeli = ref() ; 
   const hpPembeli = ref(); 
@@ -70,13 +70,19 @@
   });
   
   const sendPembeli = () => {
+
     emit('sendCustomers' , {nama:value.value.nama , 
     hp:value.value.hp , 
     alamat:value.value.alamat , 
-    bayar:bayar.value,
-    kembali:kembali.value,
+    bayar:props.bayar,
+    kembali:props.kembali,
     id:value.value.id , 
     })
+
+    value.value.alamat = '' ; 
+    value.value.hp = '' ; 
+    value.value.nama = '' ; 
+    value.value.id = '' ;
   }
   
   
