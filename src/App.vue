@@ -10,6 +10,11 @@ import { onMounted } from "vue";
 
 <template>
   <div class="container">
+    <div class="row">
+      <div class="col text-center my-4">
+        <h1>Toko Anugerah</h1>
+      </div>
+    </div>
       <div class="row">
         <div class="col">
           <router-view></router-view>

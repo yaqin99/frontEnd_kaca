@@ -23,17 +23,17 @@
     <div class="col-12 row mt-3">
       <label for="Jumlah" class="col-sm-3 col-form-label fw-bold">JUMLAH</label>
       <div class="col-sm-2">
-        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah" @change="masukan()" >
+        <input type="text" class="form-control text-center" placeholder="Jumlah" v-model="jumlah" @keyup="getHarga()" >
         <h1></h1>
       </div>
       <div class="col-sm-4 offset-sm-1 ">
         <div class="input-group sm-2">
           <span class="input-group-text" id="harga"><i class="bi bi-cash-coin"></i></span>
-          <input type="text"  class="form-control" placeholder="Rp. 0" v-model="getHarga" aria-label="Username" aria-describedby="basic-addon1">
+          <input type="text"  class="form-control" placeholder="Rp. 0" v-model="taklem"   aria-label="Username" aria-describedby="basic-addon1">
         </div>
       </div>
       <div  class="col-sm-2 d-flex flex-column">
-        <button type="button" class="bi bi-check-circle btn btn-primary" @click="sendTransaksi()" ></button>
+        <button type="button" class="bi bi-check-circle btn btn-primary" @click="masukan(); sendTransaksi()"></button>
       </div>
     </div>
   </form>
@@ -110,16 +110,14 @@
   const lebar = ref();
   const jumlah = ref();
   const harga = ref();
-  const taklem = harga.value * jumlah.value;
   const id_jenis_kaca = ref() ;
-  const getHarga = computed(()=>{
-    return taklem;
-  });
-  // const coba = async () =>{
-  //   const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
-  //   const data = await response.json();
-  //   harga.value = data.harga;
-  // }
+  const taklem = ref();
+  const getHarga = async () =>{
+    const response = await fetch('http://localhost:8181/stok/harga?id=' + Pilihan.value + '&panjang=' + panjang.value + '&lebar=' + lebar.value);
+    const data = await response.json();
+    harga.value = data.harga;
+    taklem.value = harga.value * jumlah.value;
+  }
   const hapusTransaksi = (index:any) => {
     Transaksi.splice(index,1)
   };
@@ -149,7 +147,7 @@
   }
   
   const sendTransaksi = () => {
-        emit('sendTransaction' , {Transaksi})
+    emit('sendTransaction' , {Transaksi})
   };
 </script>
 

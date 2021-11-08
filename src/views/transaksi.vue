@@ -55,29 +55,24 @@ import {reactive, ref} from 'vue'
   const datanya = ref() ; 
   const transArr = ref();
   const sendTransaction = (data:any) => {
-    
-  const lastArr = data.Transaksi;
-  
+    console.log(data.Transaksi);
+    const lastArr = data.Transaksi;
       lastArr.forEach((a:any) => {
         transaksi.push({
           id_jenis_kaca:a.id_jenis_kaca , 
-           nama:a.nama , 
-           panjang:a.panjang , 
-           lebar:a.lebar , 
-           jumlah:a.jumlah , 
-           harga:a.harga , 
-         })
+          nama:a.nama , 
+          panjang:a.panjang , 
+          lebar:a.lebar , 
+          jumlah:a.jumlah , 
+          harga:a.harga , 
+        })
       });
-  id_jenis_kaca.value = transaksi[0].id_jenis_kaca ; 
-  panjang.value = transaksi[0].panjang ; 
-  lebar.value = transaksi[0].lebar ; 
-  harga.value = transaksi[0].harga ; 
-  
-   transArr.value = data.Transaksi; 
-  console.log(JSON.stringify(data.Transaksi));
-
-
-
+    id_jenis_kaca.value = transaksi[0].id_jenis_kaca ; 
+    panjang.value = transaksi[0].panjang ; 
+    lebar.value = transaksi[0].lebar ; 
+    harga.value = transaksi[0].harga ; 
+    transArr.value = data.Transaksi; 
+    console.log(JSON.stringify(data.Transaksi));
   }
      
   let today = new Date();
